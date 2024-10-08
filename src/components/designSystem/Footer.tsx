@@ -73,6 +73,7 @@ const FooterBottom = styled.div`
   gap: 12px;
 `;
 const FooterBox = styled.footer`
+  margin-top: 0;
   width: 100%;
   display: flex;
   justify-content: center;

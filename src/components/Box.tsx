@@ -10,6 +10,7 @@ export function Box() {
 }
 
 const ContentContainer = styled.div`
+    width: 50%;
     padding: 24px;
     background-color: #F6F6F6;
     border: 1px solid #EEEEEE;
