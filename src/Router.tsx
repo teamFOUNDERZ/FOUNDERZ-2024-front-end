@@ -10,6 +10,8 @@ import Signup from './page/signup';
 import Infomation from './page/signup/infomation';
 import Interest from './page/signup/interest';
 import SignupType from './page/signup/signUpType';
+import Alarm from './page/Alarm';
+import My from './page/My';
 import './styles/globals.css';
 
 export default function Router() {
@@ -26,6 +28,8 @@ export default function Router() {
         <Route path="/interest" element={<Interest />} />
         <Route path="/post" element={<PostPage />} />
         <Route path="/write" element={<Writepost />} />
+        <Route path="/alarm" element={<Alarm />} />
+        <Route path="/my" element={<My />} />
       </Routes>
       <Footer />
     </BrowserRouter>

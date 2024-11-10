@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { BackButton } from "../../components/BackButton";
 import { Box } from "../../components/Box";
 import { Button } from "../../components/designSystem/Button";
+import { Fonts } from "../../styles/fonts";
+import { Colors } from "../../styles/colors";
 
 export default function DetailPost(){
     const company = "토스"
@@ -14,8 +16,8 @@ export default function DetailPost(){
             <Content>
                 <Title>
                     <BackButton/>
-                    <Semibold48>{company}</Semibold48>
-                    <Regular20>{introduction}</Regular20>
+                    <p style={{ ...Fonts['TitleLarge'], color: Colors.Blue500}}>{company}</p>
+                    <p style={{ ...Fonts['BodyLarge'], color: Colors.Gray600}}>{introduction}</p>
                     <Tag>#금융</Tag>
                 </Title>
                 <BoxContainer>
@@ -23,19 +25,19 @@ export default function DetailPost(){
                     <Box/>
                 </BoxContainer>
                 <Overview>
-                    <SemiBold24>II.기업 개요</SemiBold24>
-                    <SemiBold18>1. 개요</SemiBold18>
-                    <Regular16>{outline}</Regular16>
-                    <SemiBold18>2. 투자유치 현황</SemiBold18>
-                    <Regular16>{InvestmentAttractionStatus}</Regular16>
+                    <p style={{ ...Fonts['TitleSmall'], color: Colors.Black}}>II.기업 개요</p>
+                    <p style={{ ...Fonts['TitleTiny'], color: Colors.Black, marginLeft: "24px"}}>1. 개요</p>
+                    <p style={{ ...Fonts['BodySmall'], color: Colors.Black, marginLeft: "48px"}}>{outline}</p>
+                    <p style={{ ...Fonts['TitleTiny'], color: Colors.Black, marginLeft: "24px"}}>2. 투자유치 현황</p>
+                    <p style={{ ...Fonts['BodySmall'], color: Colors.Black, marginLeft: "48px"}}>{InvestmentAttractionStatus}</p>
                 </Overview>
                 <Line/>
                 <Invest>
-                    <Medium18>총 투자금</Medium18>
-                    <Semibold48>{Investamount} <Semibold36>원</Semibold36></Semibold48>
+                    <p style={{ ...Fonts['BodyMedium'], color: Colors.Gray600}}>총 투자금</p>
+                    <p style={{ ...Fonts['TitleLarge'], color: Colors.Blue500}}>{Investamount} <span>원</span></p>
                 </Invest>
                 <InvestBox>
-                    <SemiBold24>사업아이템이 마음에 드셨나요?</SemiBold24>
+                    <p style={{ ...Fonts['TitleSmall'], color: Colors.Black}}>사업아이템이 마음에 드셨나요?</p>
                     <Button>투자하기</Button>
                 </InvestBox>
             </Content>
@@ -61,7 +63,7 @@ const Title = styled.div`
 `;
 
 const Content = styled.div`
-    width: full;
+    width: 60%;
     display: flex;
     flex-direction: column;
     gap: 64px;
@@ -79,60 +81,6 @@ const Overview = styled.div`
     flex-direction: column;
     gap: 12px;
 `;
-
-const Semibold48 = styled.p`
-    font-weight: 600;
-    font-size: 48px;
-    color: #1860F0;
-    line-height: 64px;
-    letter-spacing: -2.5%;
-`;
-
-const Semibold36 = styled.span`
-    font-weight: 600;
-    font-size: 36px;
-    color: #1860F0;
-    line-height: 48px;
-    letter-spacing: -2.5%;
-`;
-
-const SemiBold24 = styled.p`
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: -2.5%;
-`;
-
-const SemiBold18 = styled.p`
-    margin-left: 24px;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 24px;
-    letter-spacing: -2.5%;
-`;
-
-const Regular20 = styled.p`
-    width: 980px;
-    font-weight: 400;
-    font-size: 20px;
-`;
-
-const Regular16 = styled.p`
-    margin-left: 48px;
-    width: 950px;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0;
-`;
-
-const Medium18 = styled.p`
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 24px;
-    color: #666666;
-`;
-
 
 const Tag = styled.div`
     width: fit-content;
