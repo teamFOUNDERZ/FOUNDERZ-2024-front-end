@@ -14,6 +14,10 @@ function HeaderNotLogin() {
     navigate("/signup");
   };
 
+  const Post = () => {
+    navigate("/Post");
+  };
+
   return (
     <>
       <Container>
@@ -22,7 +26,7 @@ function HeaderNotLogin() {
             <NavButton>
               <img src={Logo} />
             </NavButton>
-            <NavButton>사업 아이템</NavButton>
+            <NavButton onClick={Post}>사업 아이템</NavButton>
           </LeftWrapper>
           <RightWrapper>
             <NavButton onClick={toSignUp}>회원가입</NavButton>
