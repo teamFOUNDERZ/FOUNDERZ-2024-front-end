@@ -34,13 +34,13 @@ export default function My(){
                 </Field>
                 <Box>
                     <div>
-                        <SemiBold16>내 계좌 잔액</SemiBold16>
+                        <SemiBold16m>내 계좌 잔액</SemiBold16m>
                         <SemiBold36>12,450,000원</SemiBold36>
                     </div>
                     <Button>충전하기</Button>
                 </Box>
                 <div>
-                    <SemiBold16>받은 투자 요청</SemiBold16>
+                    <SemiBold16m>받은 투자 요청</SemiBold16m>
                     <Box>
                         <div>
                             <SemiBold16B>최승우님</SemiBold16B>
@@ -50,7 +50,7 @@ export default function My(){
                     </Box>
                 </div>
                 <Field>
-                    <SemiBold16>내가 투자한 아이템</SemiBold16>
+                    <SemiBold16m>내가 투자한 아이템</SemiBold16m>
                     <Box>
                         <div>
                             <SemiBold16B>토스</SemiBold16B>
@@ -136,6 +136,7 @@ const Box = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    animation: up 0.4s forwards;
 `;
 
 const Boxcotainer = styled.div`
@@ -199,6 +200,15 @@ const SemiBold16 = styled.p`
     line-height: 24px;
     letter-spacing: -2.5%;
     color: #666666;
+`;
+
+const SemiBold16m = styled.p`
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -2.5%;
+    color: #666666;
+    animation: up 0.4s forwards;
 `;
 
 const SemiBold16B = styled.p`

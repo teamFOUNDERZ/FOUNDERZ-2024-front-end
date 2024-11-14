@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../../components/BackButton';
@@ -7,11 +7,16 @@ import { Input } from '../../components/designSystem/Input';
 import { Button } from '../../components/designSystem/Button';
 import { useForm } from '../../hooks/useForm';
 import { signupStore } from '../../store/signupState';
+import { idAuthn } from '../../apis/idAuthn';
+import { AxiosError } from 'axios';
 
 export default function Information() {
   const [check, setCheck] = useState<boolean | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordMatchError, setPasswordMatchError] = useState<string | null>(null);
 
-  const { updateInfo } = signupStore();
+  const { updateInfo, updateId, updatePassword } = signupStore();
   const navigate = useNavigate();
 
   const { form, handleChange } = useForm<{
@@ -20,32 +25,87 @@ export default function Information() {
     checkPassword: string;
   }>({ id: '', password: '', checkPassword: '' });
 
-  const handleIdCheck = () => {
-    if (form.id.length < 1) {
-      alert('아이디를 입력해 주세요.');
+  const handleIdCheck = async () => {
+    if (!/^[a-zA-Z0-9]{4,20}$/.test(form.id)) {
+      setErrorMessage('올바른 형식의 아이디를 입력해 주세요.');
+      setCheck(undefined);
       return;
     }
-    setCheck(true);
+  
+    try {
+      const response = await idAuthn(form.id);
+      console.log('서버 응답:', response);
+  
+      if (response.status === 200) {
+        setCheck(true);
+        console.log('사용 가능한 아이디입니다.');
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log('서버 오류:', error.response);
+        if (error.response?.status === 409) {
+          setCheck(false);
+          console.log('이미 사용중인 아이디입니다.');
+        } else {
+          setErrorMessage('아이디 검증에 실패했습니다.');
+          setCheck(undefined);
+        }
+      } else {
+        console.log('알 수 없는 오류:', error);
+        setErrorMessage('알 수 없는 오류가 발생했습니다.');
+        setCheck(undefined);
+      }
+    }
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        '비밀번호는 8~20자의 영문자, 숫자, 특수문자(!@#$%^&*)를 포함해야 합니다.'
+      );
+    } else {
+      setPasswordError(null);
+    }
+  };
+
+  const validatePasswordMatch = (checkPassword: string) => {
+    if (checkPassword !== form.password) {
+      setPasswordMatchError('비밀번호가 일치하지 않습니다.');
+    } else {
+      setPasswordMatchError(null);
+    }
   };
 
   const nextStep = () => {
     if (form.password.length < 1) {
-      alert('비밀번호를 입력해 주세요.');
-      // return;
+      setPasswordError('비밀번호를 입력해 주세요.');
+      return;
     }
-    if (form.password !== form.checkPassword) {
-      alert('재입력한 비밀번호가 일치하지 않아요.');
-      // return;
+
+    if (passwordError || passwordMatchError || check === false || check === undefined) {
+      return;
     }
-    updateInfo({ account_id: form.id, password: form.password });
+
+    updateId(form.id);
+    updatePassword(form.password);
+    console.log('상태 업데이트 후 아이디:', signupStore.getState().account_id);
+    console.log('상태 업데이트 후 비밀번호:', signupStore.getState().password);
     navigate('/signupType');
   };
+
+  useEffect(() => {
+    console.log('현재 아이디:', signupStore.getState().account_id);
+  }, [signupStore.getState().password]);
+  useEffect(() => {
+    console.log('현재 비밀번호:', signupStore.getState().password);
+  }, [signupStore.getState().password]);
 
   return (
     <Main>
       <SignupSection>
         <TitleBox>
-          <BackButton disabled />
+          <BackButton />
           <div style={{ marginTop: '16px' }}>
             <Text font="TitleLarge">기본 정보</Text>
           </div>
@@ -57,12 +117,15 @@ export default function Information() {
           <TextFrame>
             <IdCheckWrapper>
               <Input
-                placeholder="아이디를 입력해 주세요.."
+                placeholder="아이디를 입력해 주세요."
                 label="아이디"
                 name="id"
                 required
                 value={form.id}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  setErrorMessage(null);
+                }}
                 style={{ flex: 1 }}
               />
               <Button
@@ -74,41 +137,54 @@ export default function Information() {
                 중복 체크
               </Button>
             </IdCheckWrapper>
-            {check !== undefined ? (
-              check ? (
-                <Text font="LabelSmall" color="Blue500">
-                  사용 가능한 아이디 입니다.
-                </Text>
-              ) : (
-                <Text font="LabelSmall" color="CriticalMain">
-                  이미 사용중인 아이디 입니다.
-                </Text>
-              )
-            ) : (
-              <></>
+            {check !== undefined && !errorMessage && (
+              <Text font="LabelSmall" color={check ? 'Blue500' : 'CriticalMain'}>
+                {check ? '사용 가능한 아이디 입니다.' : '이미 사용중인 아이디 입니다.'}
+              </Text>
             )}
+            {errorMessage && <Text font="LabelSmall" color="CriticalMain">{errorMessage}</Text>}
           </TextFrame>
-          <Input
-            placeholder="비밀번호를 입력해 주세요.."
-            label="비밀번호"
-            name="password"
-            required
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <Input
-            placeholder="비밀번호를 입력해 주세요.."
-            label="비밀번호 확인"
-            name="checkPassword"
-            required
-            type="password"
-            value={form.checkPassword}
-            onChange={handleChange}
-          />
+
+          <TextFrame>
+            <Input
+              placeholder="비밀번호를 입력해 주세요."
+              label="비밀번호"
+              name="password"
+              required
+              type="password"
+              value={form.password}
+              onChange={(e) => {
+                handleChange(e);
+                validatePassword(e.target.value);
+              }}
+            />
+            {passwordError && <Text font="LabelSmall" color="CriticalMain">{passwordError}</Text>}
+          </TextFrame>
+
+          <TextFrame>
+            <Input
+              placeholder="비밀번호를 입력해 주세요."
+              label="비밀번호 확인"
+              name="checkPassword"
+              required
+              type="password"
+              value={form.checkPassword}
+              onChange={(e) => {
+                handleChange(e);
+                validatePasswordMatch(e.target.value);
+              }}
+            />
+            {passwordMatchError && <Text font="LabelSmall" color="CriticalMain">{passwordMatchError}</Text>}
+          </TextFrame>
         </InputBox>
         <ButtonBox>
-          <Button type="button" size="large" full onClick={nextStep}>
+          <Button
+            type="button"
+            size="large"
+            full
+            onClick={nextStep}
+            disabled={!form.id || !form.password || check === undefined || check === false || (passwordError !== null) || (passwordMatchError !== null)}
+          >
             다음
           </Button>
         </ButtonBox>
@@ -117,16 +193,19 @@ export default function Information() {
   );
 }
 
+
 const TextFrame = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
 `;
+
 const IdCheckWrapper = styled.div`
   display: flex;
   gap: 8px;
   align-items: flex-end;
 `;
+
 const ButtonBox = styled.div`
   display: flex;
   flex-direction: column;

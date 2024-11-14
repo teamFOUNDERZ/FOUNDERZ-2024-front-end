@@ -6,39 +6,85 @@ import { BackButton } from '../../components/BackButton';
 import { Text } from '../../components/designSystem/Text';
 import { Input as DSInput } from '../../components/designSystem/Input';
 import { Button } from '../../components/designSystem/Button';
+import { getTag } from '../../apis/getTag';
+import { signupStore } from '../../store/signupState';
 
 export default function Interest() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState<string>('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ tag_id: number; tag_name: string }[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [noMatchFound, setNoMatchFound] = useState<boolean>(false);
+  const { account_id, password, name, type, phone_number, tag_ids, updateTag } = signupStore();
+
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-    if (event.target.value.trim()) {
-      fetchSuggestions(event.target.value);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
+  const fetchTags = async () => {
+    try {
+      const response = await getTag();
+      const tagsData = response.data.data;
+      if (Array.isArray(tagsData) && tagsData.length > 0) {
+        const tagNames = tagsData.map((tag: { tag_name: string }) => tag.tag_name);
+        setAllTags(tagNames);
+        setFilteredSuggestions(tagNames);
+        setShowSuggestions(true);
+      } else {
+        setFilteredSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (error) {
+      setFilteredSuggestions([]);
     }
+  };
+
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
+  const fetchSuggestions = (query: string) => {
+    if (query.trim()) {
+      const filtered = allTags.filter((tag) =>
+        tag.toLowerCase().includes(query.toLowerCase())
+      );
+
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(true);
+      setNoMatchFound(filtered.length === 0);
+    } else {
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+      setNoMatchFound(false);
+    }
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+    fetchSuggestions(value);
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && inputValue.trim()) {
-      setTags([...tags, inputValue.trim()]);
+      const newTag = inputValue.trim();
+      const existingTag = filteredSuggestions.find((tag) => tag === newTag);
+
+      if (existingTag) {
+        setTags((prevTags) => [...prevTags, { tag_id: Math.random(), tag_name: existingTag }]);
+      } else {
+        setNoMatchFound(true);
+      }
+
       setInputValue('');
-      setSuggestions([]);
       setShowSuggestions(false);
       event.preventDefault();
     }
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setTags([...tags, suggestion]);
+    setTags((prevTags) => [...prevTags, { tag_id: Math.random(), tag_name: suggestion }]);
     setInputValue('');
-    setSuggestions([]);
     setShowSuggestions(false);
   };
 
@@ -46,30 +92,9 @@ export default function Interest() {
     setTags(tags.filter((_, index) => index !== indexToRemove));
   };
 
-  const fetchSuggestions = (query: string) => {
-    // Simulate an API call
-    const simulatedSuggestions = [
-      '이동통신',
-      '이동통신 서비스',
-      '이동통신 시스템',
-      '이동통신 단말기',
-      '기타 이동통신',
-      '기타 이동통신기기',
-      '친환경',
-      '마케팅',
-      '쇼핑',
-      'IT',
-    ].filter((item) => item.toLowerCase().includes(query.toLowerCase()));
-    setSuggestions(simulatedSuggestions);
-    setShowSuggestions(true);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target as Node)
-      ) {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     };
@@ -79,6 +104,10 @@ export default function Interest() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleSubmit = () => {
+    
+  };
 
   return (
     <Main>
@@ -102,27 +131,29 @@ export default function Interest() {
               onKeyPress={handleKeyPress}
               required
               placeholder="관심 분야 검색"
+              autoComplete="off"
             />
             <SearchIcon>
               <IoSearch />
             </SearchIcon>
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && (
               <SuggestionsList>
-                {suggestions.map((suggestion, index) => (
-                  <SuggestionItem
-                    key={index}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
-                  </SuggestionItem>
-                ))}
+                {filteredSuggestions.length > 0 ? (
+                  filteredSuggestions.map((suggestion) => (
+                    <SuggestionItem key={suggestion} onClick={() => handleSuggestionClick(suggestion)}>
+                      {suggestion}
+                    </SuggestionItem>
+                  ))
+                ) : (
+                  <SuggestionItem>존재하지 않는 분야입니다</SuggestionItem>
+                )}
               </SuggestionsList>
             )}
           </SearchWrapper>
           <TagsContainer>
             {tags.map((tag, index) => (
-              <Tag key={index}>
-                {tag}
+              <Tag key={tag.tag_id}>
+                {tag.tag_name}
                 <TagClose onClick={() => removeTag(index)}>
                   <IoClose />
                 </TagClose>
@@ -131,7 +162,7 @@ export default function Interest() {
           </TagsContainer>
         </InputGroup>
         <ButtonBox>
-          <Button size="large" full type="button">
+          <Button size="large" full type="button" onClick={handleSubmit}>
             회원가입
           </Button>
         </ButtonBox>
@@ -139,6 +170,7 @@ export default function Interest() {
     </Main>
   );
 }
+
 
 const ButtonBox = styled.div`
   display: flex;

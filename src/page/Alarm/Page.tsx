@@ -61,4 +61,5 @@ const List = styled.div`
     height: fit-content;
     padding: 24px 0 24px 0;
     gap: 8px;
+    animation: up 0.4s forwards;
 `;

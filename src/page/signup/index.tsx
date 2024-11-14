@@ -6,12 +6,12 @@ import { Text } from '../../components/designSystem/Text';
 import { Input } from '../../components/designSystem/Input';
 import { Button } from '../../components/designSystem/Button';
 import { useForm } from '../../hooks/useForm';
-import { messageSend, messageVerify } from '../../apis/messageCheck';
+import { messageSend } from '../../apis/messageCheck';
+import { phoneValidation } from '../../apis/phoneValidation';
 import { signupStore } from '../../store/signupState';
 
 export default function Signup() {
   const [check, setCheck] = useState<boolean | undefined>(undefined);
-
   const { updatePhone } = signupStore();
   const navigate = useNavigate();
 
@@ -21,11 +21,16 @@ export default function Signup() {
   }>({ phone: '', certification: '' });
 
   const phoneCheck = async () => {
-    if (form.phone.length != 11) {
+    if (form.phone.length !== 11) {
       alert('휴대폰 번호를 정확히 입력했는지 확인해 주세요.');
       return;
     }
-    await messageSend(form.phone).then(() => alert('인증번호가 전송되었어요.'));
+    try {
+      await messageSend(form.phone);
+      alert('인증번호가 전송되었습니다.');
+    } catch (error) {
+      alert('인증번호 발송에 실패했습니다.');
+    }
   };
 
   const phoneVerify = async () => {
@@ -33,18 +38,22 @@ export default function Signup() {
       alert('인증번호를 입력해 주세요.');
       return;
     }
-    const isCheck = await messageVerify(form.phone, form.certification).catch(
-      () => false
-    );
-    setCheck(isCheck);
+    try {
+      const isCheck = await phoneValidation(form.phone);
+      setCheck(isCheck.success);
+    } catch (error) {
+      setCheck(false);
+      alert('인증번호를 확인해 주세요.');
+    }
   };
 
   const nextStep = () => {
-    if (!check) {
+    if (check) {
       alert('인증을 먼저 완료해 주세요.');
-      // return;
+      return;
     }
     updatePhone(form.phone);
+    console.log(signupStore.getState().phone_number);
     navigate('/infomation');
   };
 
@@ -103,16 +112,14 @@ export default function Signup() {
             {check !== undefined ? (
               check ? (
                 <Text font="LabelSmall" color="Blue500">
-                  인증되었어요.
+                  인증되었습니다.
                 </Text>
               ) : (
                 <Text font="LabelSmall" color="CriticalMain">
                   인증번호를 다시 확인해 주세요.
                 </Text>
               )
-            ) : (
-              <></>
-            )}
+            ) : null}
           </TextFrame>
         </InputBox>
         <ButtonBox>
@@ -140,6 +147,7 @@ const TextFrame = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
+
 const IdCheckWrapper = styled.div`
   display: flex;
   gap: 8px;

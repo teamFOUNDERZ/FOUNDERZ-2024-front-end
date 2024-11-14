@@ -12,18 +12,11 @@ export default function SignupType() {
   const navigate = useNavigate();
   const [isIndividual, setIsIndividual] = useState(true);
   const [inputLabel, setInputLabel] = useState('이름');
-  const [inputPlaceholder, setInputPlaceholder] =
-    useState('이름을 입력해 주세요..');
+  const [inputPlaceholder, setInputPlaceholder] = useState('이름을 입력해 주세요..');
 
-  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsIndividual(event.target.value === '개인');
-  };
+  const { updateUserType, updateName } = signupStore();
 
-  const { updateUserType } = signupStore();
-
-  const { form, handleChange } = useForm<{
-    name: string;
-  }>({ name: '' });
+  const { form, handleChange } = useForm<{ name: string }>({ name: '' });
 
   useEffect(() => {
     if (isIndividual) {
@@ -35,16 +28,28 @@ export default function SignupType() {
     }
   }, [isIndividual]);
 
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsIndividual(event.target.value === '개인');
+  };
+
   const nextStep = () => {
     updateUserType(isIndividual ? 'PERSONAL' : 'COMPANY');
+    updateName(form.name);
     navigate('/interest');
   };
+
+  useEffect(() => {
+    console.log('현재 userType:', signupStore.getState().type);
+  }, [signupStore.getState().password]);
+  useEffect(() => {
+    console.log('현재 이름:', signupStore.getState().name);
+  }, [signupStore.getState().password]);
 
   return (
     <Main>
       <SignupSection>
         <TitleBox>
-          <BackButton disabled />
+          <BackButton />
           <div style={{ marginTop: '16px' }}>
             <Text font="TitleLarge">가입 유형</Text>
           </div>
@@ -168,7 +173,7 @@ const Span = styled.span<SpanProps>`
   transform: ${(props) =>
     props.isIndividual
       ? 'translateX(0)'
-      : 'translateX(96.5%)'}; /* updated transform */
+      : 'translateX(96.5%)'};
 `;
 
 const ToggleInput = styled.input`

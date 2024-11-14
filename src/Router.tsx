@@ -2,17 +2,19 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Footer } from './components/designSystem/Footer';
 import { Header } from './components/designSystem/Header';
 import Writepost from './components/organism/Writepost';
-import DetailPost from './page/detailPost';
+import DetailPost from './page/detailPost/Page';
 import LogInPage from './page/logIn/page';
 import MainPage from './page/main/page';
 import PostPage from './page/post/page';
 import Signup from './page/signup';
 import Infomation from './page/signup/infomation';
 import Interest from './page/signup/interest';
-import SignupType from './page/signup/signUpType';
-import Alarm from './page/Alarm';
-import My from './page/My';
+import SignupType from './page/signup/signupType';
+import Alarm from './page/Alarm/Page';
+import My from './page/My/Page';
 import './styles/globals.css';
+import Zustand from './page/zustand';
+import PaymentPage from './page/PaymentPage';
 
 export default function Router() {
   return (
@@ -30,6 +32,8 @@ export default function Router() {
         <Route path="/write" element={<Writepost />} />
         <Route path="/alarm" element={<Alarm />} />
         <Route path="/my" element={<My />} />
+        <Route path="/z" element={<Zustand />} />
+        <Route path="/o" element={<PaymentPage />} />
       </Routes>
       <Footer />
     </BrowserRouter>

@@ -14,7 +14,7 @@ export type SignupType = {
 export const signup = async (data: SignupType) => {
   return await instance({
     method: 'POST',
-    url: '/auth/signup',
+    url: '/api/auth/register',
     data: data,
   });
 };

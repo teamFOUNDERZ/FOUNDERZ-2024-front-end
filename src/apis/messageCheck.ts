@@ -2,21 +2,14 @@ import { instance } from './interceptor';
 
 export const messageSend = async (phone: string) => {
   return await instance({
-    method: 'POST',
-    url: '/auth/message',
-    data: {
-      phone_number: phone,
-    },
+    method: 'GET',
+    url: `/api/auth/phone-number/validation?phone-number=${phone}`,
   });
 };
 
-export const messageVerify = async (phone: string, verifyNumber: string) => {
-  return await instance({
-    method: 'POST',
-    url: '/auth/verifySms',
-    data: {
-      phone_number: phone,
-      random_number: verifyNumber,
-    },
-  }).then((res) => res.data);
-};
+// export const messageVerify = async (phone: string, verifyNumber: string) => {
+//   return await instance({
+//     method: 'GET',
+//     url: `/api/auth/phone-number/validation?phone-number=${phone}&random-number=${verifyNumber}`,
+//   }).then((res) => res.data);
+// };

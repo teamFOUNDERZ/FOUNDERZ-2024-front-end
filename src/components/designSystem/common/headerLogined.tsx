@@ -11,6 +11,14 @@ function HeaderLogined() {
     navigate("/Post");
   };
 
+  const Alarm = () => {
+    navigate("/alarm")
+  };
+
+  const My = () => {
+    navigate("/my")
+  };
+
   return (
     <Container>
       <ItemWrapper>
@@ -19,6 +27,8 @@ function HeaderLogined() {
             <img src={Logo} />
           </NavButton>
           <NavButton onClick={Post}>사업 아이템</NavButton>
+          <NavButton onClick={Alarm}>내 알림</NavButton>
+          <NavButton onClick={My}>마이페이지</NavButton>
         </LeftWrapper>
         <RightWrapper>
           <NavButton>

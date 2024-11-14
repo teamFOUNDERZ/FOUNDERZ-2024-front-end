@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const instance = axios.create({
-  baseURL: 'https://prod-server.xquare.app/founderz',
+  baseURL: 'https://founderz-server.xquare.app/',
   timeout: 30000,
 });
 

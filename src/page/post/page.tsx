@@ -5,29 +5,6 @@ import { Button } from '../../components/designSystem/Button';
 import { useEffect, useState } from 'react';
 import { getPost, PostListType } from '../../apis/getPost';
 
-const dummy = [
-  {
-    business_id: 1,
-    business_name: '삼성전자',
-    one_liner:
-      '반도체, 전자제품, 디스플레이와 통신장비, 전자 부품들을 설계, 제조하는 종합 반도체 기업이 되려고 합니다.',
-    total_investment: 12450000,
-    tags: [
-      { id: 1, tagName: '종합 반도체' },
-      { id: 2, tagName: '디스플레이' },
-      { id: 3, tagName: '전자 부품 제조' },
-    ],
-  },
-  {
-    business_id: 2,
-    business_name: '토스',
-    one_liner:
-      '공인인증서나 보안 매체 없이 앱을 통해 빠르고 손쉽게 송금이 가능한 서비스입니다.',
-    total_investment: 500000,
-    tags: [{ id: 1, tagName: '금융' }],
-  },
-];
-
 export default function PostPage() {
   const [itemData, setItemData] = useState<PostListType[]>([
     {
