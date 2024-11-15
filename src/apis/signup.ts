@@ -7,8 +7,8 @@ export type SignupType = {
   password: string;
   name: string;
   phone_number: string;
-  tag_name: string[];
-  user_type: UserType;
+  tag_ids: string[];
+  type: UserType;
 };
 
 export const signup = async (data: SignupType) => {
