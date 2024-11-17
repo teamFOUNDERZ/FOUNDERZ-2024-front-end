@@ -89,17 +89,8 @@ export default function Information() {
 
     updateId(form.id);
     updatePassword(form.password);
-    console.log('상태 업데이트 후 아이디:', signupStore.getState().account_id);
-    console.log('상태 업데이트 후 비밀번호:', signupStore.getState().password);
     navigate('/signupType');
   };
-
-  useEffect(() => {
-    console.log('현재 아이디:', signupStore.getState().account_id);
-  }, [signupStore.getState().password]);
-  useEffect(() => {
-    console.log('현재 비밀번호:', signupStore.getState().password);
-  }, [signupStore.getState().password]);
 
   return (
     <Main>

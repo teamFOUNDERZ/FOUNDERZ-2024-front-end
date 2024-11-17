@@ -38,13 +38,6 @@ export default function SignupType() {
     navigate('/interest');
   };
 
-  useEffect(() => {
-    console.log('현재 userType:', signupStore.getState().type);
-  }, [signupStore.getState().password]);
-  useEffect(() => {
-    console.log('현재 이름:', signupStore.getState().name);
-  }, [signupStore.getState().password]);
-
   return (
     <Main>
       <SignupSection>

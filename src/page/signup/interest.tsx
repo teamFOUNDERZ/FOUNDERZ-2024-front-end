@@ -8,12 +8,13 @@ import { Input as DSInput } from '../../components/designSystem/Input';
 import { Button } from '../../components/designSystem/Button';
 import { getTag } from '../../apis/getTag';
 import { signupStore } from '../../store/signupState';
+import { signup, UserType } from '../../apis/signup';
 
 export default function Interest() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState<string>('');
-  const [tags, setTags] = useState<{ tag_id: number; tag_name: string }[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ tag_id: string; tag_name: string }[]>([]);
+  const [allTags, setAllTags] = useState<{ tag_id: string; tag_name: string }[]>([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [noMatchFound, setNoMatchFound] = useState<boolean>(false);
@@ -26,9 +27,8 @@ export default function Interest() {
       const response = await getTag();
       const tagsData = response.data.data;
       if (Array.isArray(tagsData) && tagsData.length > 0) {
-        const tagNames = tagsData.map((tag: { tag_name: string }) => tag.tag_name);
-        setAllTags(tagNames);
-        setFilteredSuggestions(tagNames);
+        setAllTags(tagsData);
+        setFilteredSuggestions(tagsData.map(tag => tag.tag_name));
         setShowSuggestions(true);
       } else {
         setFilteredSuggestions([]);
@@ -45,10 +45,9 @@ export default function Interest() {
 
   const fetchSuggestions = (query: string) => {
     if (query.trim()) {
-      const filtered = allTags.filter((tag) =>
-        tag.toLowerCase().includes(query.toLowerCase())
-      );
-
+      const filtered = allTags
+        .filter(tag => tag.tag_name.toLowerCase().includes(query.toLowerCase()))
+        .map(tag => tag.tag_name);
       setFilteredSuggestions(filtered);
       setShowSuggestions(true);
       setNoMatchFound(filtered.length === 0);
@@ -68,10 +67,11 @@ export default function Interest() {
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && inputValue.trim()) {
       const newTag = inputValue.trim();
-      const existingTag = filteredSuggestions.find((tag) => tag === newTag);
+      const existingTag = allTags.find(tag => tag.tag_name === newTag);
 
       if (existingTag) {
-        setTags((prevTags) => [...prevTags, { tag_id: Math.random(), tag_name: existingTag }]);
+        setTags((prevTags) => [...prevTags, existingTag]);
+        updateTag([...tag_ids, existingTag.tag_id]);  // Update Zustand store with new tag ID
       } else {
         setNoMatchFound(true);
       }
@@ -83,13 +83,19 @@ export default function Interest() {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setTags((prevTags) => [...prevTags, { tag_id: Math.random(), tag_name: suggestion }]);
+    const selectedTag = allTags.find(tag => tag.tag_name === suggestion);
+    if (selectedTag) {
+      setTags((prevTags) => [...prevTags, selectedTag]);
+      updateTag([...tag_ids, selectedTag.tag_id]);  // Update Zustand store with selected tag ID
+    }
     setInputValue('');
     setShowSuggestions(false);
   };
 
   const removeTag = (indexToRemove: number) => {
-    setTags(tags.filter((_, index) => index !== indexToRemove));
+    const updatedTags = tags.filter((_, index) => index !== indexToRemove);
+    setTags(updatedTags);
+    updateTag(updatedTags.map(tag => tag.tag_id));  // Update Zustand store with remaining tag IDs
   };
 
   useEffect(() => {
@@ -105,8 +111,23 @@ export default function Interest() {
     };
   }, []);
 
-  const handleSubmit = () => {
-    
+  const handleSubmit = async () => {
+    try {
+      const response = await signup({
+        account_id,
+        name,
+        phone_number,
+        password,
+        tag_ids: tags.map(tag => tag.tag_id),
+        type: type as UserType,
+      });
+  
+      if (response.status === 201) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('회원가입에 실패하였습니다', error);
+    }
   };
 
   return (

@@ -1,14 +1,14 @@
 import { instance } from './interceptor';
 
-type UserType = 'PERSONAL' | 'COMPANY';
+export type UserType = 'PERSONAL' | 'COMPANY';
 
 export type SignupType = {
   account_id: string;
   password: string;
   name: string;
   phone_number: string;
-  tag_name: string[];
-  user_type: UserType;
+  tag_ids: string[];
+  type: UserType;
 };
 
 export const signup = async (data: SignupType) => {

@@ -5,20 +5,26 @@ import { Input } from '../../components/designSystem/Input';
 import { useForm } from '../../hooks/useForm';
 import { Button } from '../../components/designSystem/Button';
 import { login } from '../../apis/login';
+import { useNavigate } from 'react-router-dom';
 
 export default function LogInPage() {
+  const navigate = useNavigate();
   const { form, setForm, handleChange } = useForm<{
     id: string;
     password: string;
   }>({ id: '', password: '' });
 
-  const handleLogin = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (form.id && form.password)
-      login(form.id, form.password).catch((err) => {
+    if (form.id && form.password) {
+      try {
+        await login(form.id, form.password);
+        navigate('/')
+      } catch (err) {
         alert('회원 정보와 일치하는 계정이 없어요.');
         setForm({ id: '', password: '' });
-      });
+      }
+    }
   };
 
   return (

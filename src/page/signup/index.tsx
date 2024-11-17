@@ -29,7 +29,7 @@ export default function Signup() {
       await messageSend(form.phone);
       alert('인증번호가 전송되었습니다.');
     } catch (error) {
-      alert('인증번호 발송에 실패했습니다.');
+      alert('이미 가입된 전화번호입니다.');
     }
   };
 
@@ -48,12 +48,11 @@ export default function Signup() {
   };
 
   const nextStep = () => {
-    if (check) {
+    if (!check) {
       alert('인증을 먼저 완료해 주세요.');
       return;
     }
     updatePhone(form.phone);
-    console.log(signupStore.getState().phone_number);
     navigate('/infomation');
   };
 
