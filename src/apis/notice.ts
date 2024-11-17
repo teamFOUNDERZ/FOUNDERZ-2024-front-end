@@ -3,10 +3,11 @@ import { instance } from "./interceptor";
 /**
  * @returns 알림 단일 조회 response
  * - notice_id: string
- * - title: string
  * - content: string
- * - created_at: string
- * - updated_at: string
+ * - type: {
+ *   - type: string,
+ *   - content: string
+ * }
  */
 export const getNoticeById = async (id: string) => {
     return await instance({
@@ -18,11 +19,12 @@ export const getNoticeById = async (id: string) => {
 /**
  * @returns 알림 목록 조회 response
  * - notices: Array { 
- *  - notice_id: string, 
- *  - title: string, 
- *  - content: string, 
- *  - created_at: string, 
- *  - updated_at: string 
+ *   - notice_id: string
+ *   - content: string
+ *   - type: {
+ *     - type: string,
+ *     - content: string
+ *   }
  * }
  */
 export const getAllNotice = async () => {
