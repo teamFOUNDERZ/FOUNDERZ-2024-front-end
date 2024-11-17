@@ -9,9 +9,12 @@ import PostPage from './page/post/page';
 import Signup from './page/signup';
 import Infomation from './page/signup/infomation';
 import Interest from './page/signup/interest';
-import SignupType from './page/signup/signupType';
+import SignupType from './page/signup/signUpType';
 import Alarm from './page/Alarm/Page';
 import My from './page/My/Page';
+
+import InvestCheck from "./components/organism/InvestCheck";
+import InvestWrite from "./components/organism/InvestWrite";
 import './styles/globals.css';
 import Zustand from './page/zustand';
 import PaymentPage from './page/PaymentPage';
@@ -30,10 +33,7 @@ export default function Router() {
         <Route path="/interest" element={<Interest />} />
         <Route path="/post" element={<PostPage />} />
         <Route path="/write" element={<Writepost />} />
-        <Route path="/alarm" element={<Alarm />} />
-        <Route path="/my" element={<My />} />
-        <Route path="/z" element={<Zustand />} />
-        <Route path="/o" element={<PaymentPage />} />
+        <Route path="/investWrite" element={<InvestWrite />} />
       </Routes>
       <Footer />
     </BrowserRouter>

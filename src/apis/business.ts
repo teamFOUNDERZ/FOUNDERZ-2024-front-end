@@ -42,10 +42,27 @@ type writeBusinessType = {
     tag_ids: string[]
 }
 
-export const writeBusiness = async (data: writeBusinessType) => {
+// export const writeBusiness = async (data: writeBusinessType) => {
+//     return await instance({
+//         method: 'POST',
+//         url: '/api/business',
+//         data: data,
+//     });
+// }
+
+
+// 박예빈
+/**
+ * @param 사업 아이템 작성 요청 데이터
+ * @returns 작성된 사업 아이템 response
+ */
+export const writeBusinessItem = async (data: writeBusinessType, token: string) => {
     return await instance({
         method: 'POST',
-        url: '/api/business',
+        url: '/api/business/write',
         data: data,
+        headers: {
+            Authorization: `Bearer ${token}`,  
+        },
     });
-}
+};

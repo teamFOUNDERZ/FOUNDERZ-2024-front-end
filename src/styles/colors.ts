@@ -19,7 +19,7 @@ export const Colors = {
   Blue400: '#3573F0',
   Blue300: '#6496FA',
   Blue200: '#8CB1FA',
-  Blue100: '#BED2FA',
+  Blue100: '#1c2942',
   Blue50: '#EBF0FA',
   CriticalMain: '#DB2C36',
   CriticalBackground: '#FFE6D8',
