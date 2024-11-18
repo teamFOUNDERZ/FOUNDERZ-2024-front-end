@@ -6,9 +6,10 @@ import { Hide, Show } from '../../assets';
 
 type Props = ComponentProps<'input'> & {
   label?: string;
+  fontSize?: string;
 };
 
-export const Input = ({ label, type = 'text', style, ...props }: Props) => {
+export const Input = ({ fontSize, label, type = 'text', style, ...props }: Props) => {
   const [passShow, setPassShow] = useState<boolean>(false);
 
   return (
@@ -22,7 +23,9 @@ export const Input = ({ label, type = 'text', style, ...props }: Props) => {
         <InputContent
           type={type === 'password' ? (!passShow ? 'password' : 'text') : type}
           {...props}
+          fontSize={fontSize}
         />
+        
         {type === 'password' &&
           (passShow ? (
             <div
@@ -44,8 +47,8 @@ export const Input = ({ label, type = 'text', style, ...props }: Props) => {
   );
 };
 
-const InputContent = styled.input`
-  font-size: 16px;
+const InputContent = styled.input<{ fontSize?: string }>`
+  font-size: ${(props) => props.fontSize || '16px'} !important;
   font-weight: 400;
   line-height: 24px;
   color: black;

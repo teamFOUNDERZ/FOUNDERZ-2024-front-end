@@ -15,10 +15,6 @@ const ConfirmSendModal: React.FC<ModalProps> = ({ close }) => {
       setIsCompleteModalOpen(true);
    };
 
-   // const closeConfirmModal = () => {
-   //    setIsCompleteModalOpen(false);
-   // };
-
    return (
       <>
          {!isCompleteModalOpen && (

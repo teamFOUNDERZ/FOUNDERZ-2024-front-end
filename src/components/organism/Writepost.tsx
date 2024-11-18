@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 
 // 사업 아이템 작성
 
-
 function Writepost() {
   const Navigate = useNavigate();
   // 게시물 정보를 관리하는 상태 정의
@@ -51,7 +50,7 @@ function Writepost() {
     }
   };
 
-  localStorage.setItem('token', 'v2.local.p0UsxEeeznj_XEX1wTfcciv-6ZrB5rRkmxuPY5h3SSQO5HMe8XKoHncCGS-onRM0oLndIP8qiCGysqfnzjEYatQJ9dRT0QHe0uKX6kthUaBm5dP9JF8KCeLKd2LxzPQPDzhhzu_NBgu-6H6HmxZ0AbYPlxkYGIntPVOubfSq_Ix0fgDMFwn_wsvuo6LVfRMdEDJM_zsxiUnSEJfyjcDQsg.eyJraWQiOiI3OGQyZDMxYi1mM2E4LTRhMmUtYWEwOC03MTMzNzA0ZTUwMDQifQ');
+  localStorage.setItem('token', 'v2.local.0TP6esB9cx1fiivY2ejCrLvm4sMFiHI-gvWboCDd_lPEYOzMWeCOtj2eNX1sShxVGOmyHwFJL4S-64DliJDDYl2FV2NolS-XRPOSg5SLfTPZsPMi2LJA9O99YHd1lHvRfJwJGKHHDdNZeOAR4b_d7Fq33GcBnJiXjvek_cOdixDs97hOZv_ZGXcW3eKJ_lFsW-zLwHbeOzmW77pGkGyQvg.eyJraWQiOiI2NGQyMzQ5MC0wMTFhLTRjOGUtYjViMC02MTgyMGRhYWYwZGEifQ');
 
   // 폼 제출 함수
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,8 +69,6 @@ function Writepost() {
       console.error('토큰이 없습니다.');
       return;
     }
-
-  
 
     try {
       const response = await writeBusinessItem({
@@ -124,21 +121,37 @@ function Writepost() {
     fetchSuggestions(value);
   };
 
-
   // 추천 태그 필터링 함수
   const fetchSuggestions = (query: string) => {
     if (query.trim()) {
       const filtered = allTags.filter((tag) =>
-        tag.tag_name.toLowerCase().includes(query.toLowerCase()) // 태그 이름을 필터링
+        tag.tag_name.toLowerCase().includes(query.toLowerCase())
       );
-
       setFilteredSuggestions(filtered.map(tag => tag.tag_name));
       setShowSuggestions(true);
     } else {
+      // 빈 입력값이여도 추천 목록 초기화
       setFilteredSuggestions([]);
-      setShowSuggestions(false);
+      // setShowSuggestions(false);
     }
   };
+
+  // 
+  const handleSuggestionClick = (suggestion: string) => {
+    const existingTag = allTags.find((tag) => tag.tag_name === suggestion);
+  
+    if (existingTag) {
+      setTags((prevTags) => [
+        ...prevTags,
+        { tag_id: existingTag.tag_id, tag_name: existingTag.tag_name },
+      ]);
+    }
+
+    setInputValue(''); 
+    setShowSuggestions(false);
+    console.log(suggestion);
+  };
+
 
   return (
     <>
@@ -163,6 +176,7 @@ function Writepost() {
                 style={{ width: '65%' }}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="사업 이름을 입력해주세요."
+                fontSize='18px'
               />
             </InputContainer>
 
@@ -174,6 +188,7 @@ function Writepost() {
                 style={{ width: '65%' }}
                 onChange={(e) => SetIntrodcue(e.target.value)}
                 placeholder="사업에 대해서 한 줄로 소개해 주세요."
+                fontSize='18px'
               />
             </InputContainer>
 
@@ -189,6 +204,7 @@ function Writepost() {
                   textareaProps={{
                     placeholder: "사업 소개를 입력해주세요.."
                   }}
+                  
                 />
               </StyledEditorContainer>
             </InputContainer>
@@ -200,6 +216,7 @@ function Writepost() {
                 value={vision}
                 onChange={(e) => setVision(e.target.value)}
                 placeholder="사업의 비전을 입력해주세요."
+                fontSize='18px'
               />
             </InputContainer>
 
@@ -210,6 +227,7 @@ function Writepost() {
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
                 placeholder="사업 아이템의 작성 목적을 알려주세요."
+                fontSize='18px'
               />
             </InputContainer>
 
@@ -225,10 +243,8 @@ function Writepost() {
                     onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                     onFocus={() => fetchTags()}
-                    onBlur={() => setShowSuggestions(false)}
-                    // required
-
                     placeholder="분야 태그를 추가해보세요."
+                    fontSize='18px'
                   />
                   <SearchIcon>
                     <IoSearch />
@@ -237,7 +253,10 @@ function Writepost() {
                     <SuggestionsList>
                       {filteredSuggestions.length > 0 ? (
                         filteredSuggestions.map((suggestion) => (
-                          <SuggestionItem key={suggestion}>
+                          <SuggestionItem
+                            key={suggestion}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                          >
                             {suggestion}
                           </SuggestionItem>
                         ))
@@ -251,7 +270,7 @@ function Writepost() {
                   {tags.map((tag, index) => (
                     <TagItem key={index}>
                       <Tag>#{tag.tag_name}</Tag>
-                      <CloseButton onClick={() => handleRemoveTag(index)}>
+                      <CloseButton type="button" onClick={() => handleRemoveTag(index)}>
                         <AiOutlineClose id="close" />
                       </CloseButton>
                     </TagItem>
@@ -287,7 +306,8 @@ const SuggestionsList = styled.ul`
   background: #fff;
   border: 1px solid #eee;
   border-radius: 12px;
-  max-height: 260px;
+  max-height: 200px;
+  max-width: 65%;
   overflow-y: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -325,7 +345,7 @@ const StyledEditorContainer = styled.div`
     background-color: #f6f6f6; 
     --md-editor-border-color: #eee;
     box-shadow: 0 0 0 1px var(--md-editor-border-color);
-    font-size: 16px;
+    font-size: 18px;
     border-radius: 12px;
   }
   .w-md-editor-toolbar {
@@ -336,10 +356,10 @@ const StyledEditorContainer = styled.div`
     padding: 16px;
   }
   .w-md-editor-text-pre > code {
-      font-size: 16px !important;  
+      font-size: 18px !important;  
     }
   .w-md-editor-text-input {
-    font-size: 16px;
+    font-size: 18px;
     &::placeholder {
       font-weight: 500;
     }
@@ -351,6 +371,24 @@ const StyledEditorContainer = styled.div`
   .w-md-editor-toolbar {
     border-bottom: 1px solid #eee;
   }
+
+  .w-md-editor-preview p{
+    font-size: 18px !important;
+  }
+
+
+  .w-md-editor-toolbar button {
+    width: 40px;
+    height: 40px;
+  }
+
+ 
+  .w-md-editor-toolbar svg {
+    width: 20px;
+    height: 20px;
+  }
+ 
+
   
 `;
 
@@ -408,8 +446,8 @@ const Form = styled.form`
 const Label = styled.div`
   width: 50%;
   text-align: left;
-  margin-bottom: 10px;
-  font-size: 16px;
+  margin-bottom: 15px;
+  font-size: 20px;
   font-weight: 500;
 `;
 
