@@ -71,7 +71,7 @@ export default function Interest() {
 
       if (existingTag) {
         setTags((prevTags) => [...prevTags, existingTag]);
-        updateTag([...tag_ids, existingTag.tag_id]);  // Update Zustand store with new tag ID
+        updateTag([...tag_ids, existingTag.tag_id]);
       } else {
         setNoMatchFound(true);
       }
@@ -86,7 +86,7 @@ export default function Interest() {
     const selectedTag = allTags.find(tag => tag.tag_name === suggestion);
     if (selectedTag) {
       setTags((prevTags) => [...prevTags, selectedTag]);
-      updateTag([...tag_ids, selectedTag.tag_id]);  // Update Zustand store with selected tag ID
+      updateTag([...tag_ids, selectedTag.tag_id]);
     }
     setInputValue('');
     setShowSuggestions(false);
@@ -95,7 +95,7 @@ export default function Interest() {
   const removeTag = (indexToRemove: number) => {
     const updatedTags = tags.filter((_, index) => index !== indexToRemove);
     setTags(updatedTags);
-    updateTag(updatedTags.map(tag => tag.tag_id));  // Update Zustand store with remaining tag IDs
+    updateTag(updatedTags.map(tag => tag.tag_id));
   };
 
   useEffect(() => {

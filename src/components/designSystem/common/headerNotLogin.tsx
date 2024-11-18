@@ -13,9 +13,6 @@ export default function headerNotLogined () {
           <a href="/" style={{ color: Colors.Blue500 }}>
             <Logo />
           </a>
-          <a href="/post">
-            <Button kind="white">사업 아이템</Button>
-          </a>
         </Nav>
         <UserBox>
             <>

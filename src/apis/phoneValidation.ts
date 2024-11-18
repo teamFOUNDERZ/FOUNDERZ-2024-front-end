@@ -8,9 +8,22 @@ type PhoneValidationResponse = {
 export const phoneValidation = async (phoneNumber: string): Promise<PhoneValidationResponse> => {
   const response = await instance<PhoneValidationResponse>({
     method: 'GET',
-    url: '/api/auth/phone-number/validation',
+    url: '/api/auth/send',
     params: {
       'phone-number': phoneNumber,
+    },
+  });
+
+  return response.data;
+};
+
+export const phoneValidationget = async (phoneNumber: string, randomNum: string): Promise<PhoneValidationResponse> => {
+  const response = await instance<PhoneValidationResponse>({
+    method: 'GET',
+    url: '/api/auth/send',
+    params: {
+      'phone-number': phoneNumber,
+      'random-num': randomNum,
     },
   });
 

@@ -7,7 +7,7 @@ import { Input } from '../../components/designSystem/Input';
 import { Button } from '../../components/designSystem/Button';
 import { useForm } from '../../hooks/useForm';
 import { messageSend } from '../../apis/messageCheck';
-import { phoneValidation } from '../../apis/phoneValidation';
+import { phoneValidationget } from '../../apis/phoneValidation';
 import { signupStore } from '../../store/signupState';
 
 export default function Signup() {
@@ -39,7 +39,7 @@ export default function Signup() {
       return;
     }
     try {
-      const isCheck = await phoneValidation(form.phone);
+      const isCheck = await phoneValidationget(form.phone, form.certification);
       setCheck(isCheck.success);
     } catch (error) {
       setCheck(false);

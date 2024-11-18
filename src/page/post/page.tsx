@@ -1,42 +1,33 @@
+import { useEffect, useState } from 'react';
+import { getAllBusiness } from '../../apis/business';
 import styled from 'styled-components';
 import { Colors } from '../../styles/colors';
 import { Text } from '../../components/designSystem/Text';
 import { Button } from '../../components/designSystem/Button';
-import { useEffect, useState } from 'react';
-import { getPost, PostListType } from '../../apis/getPost';
 
-export default function PostPage() {
-  const [itemData, setItemData] = useState<PostListType[]>([
-    {
-      business_id: 1,
-      business_name: '삼성전자',
-      one_liner:
-        '반도체, 전자제품, 디스플레이와 통신장비, 전자 부품들을 설계, 제조하는 종합 반도체 기업이 되려고 합니다.',
-      total_investment: 12450000,
-      tags: [
-        { id: 1, tagName: '종합 반도체' },
-        { id: 2, tagName: '디스플레이' },
-        { id: 3, tagName: '전자 부품 제조' },
-      ],
-    },
-    {
-      business_id: 2,
-      business_name: '토스',
-      one_liner:
-        '공인인증서나 보안 매체 없이 앱을 통해 빠르고 손쉽게 송금이 가능한 서비스입니다.',
-      total_investment: 500000,
-      tags: [{ id: 1, tagName: '금융' }],
-    },
-  ]);
+interface BusinessItem {
+  business_id: string;
+  business_name: string;
+  one_line_introduction: string;
+  tags: { tag_id: string; tag_name: string }[];
+  number_of_data: number;
+}
 
-  const getData = async () => {
-    const data = await getPost();
-    setItemData(data);
+const PostPage = () => {
+  const [itemData, setItemData] = useState<BusinessItem[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const data = await getAllBusiness();
+      setItemData(data);
+    } catch (error) {
+      console.error('사업 아이템 목록을 불러오는 중 오류 발생:', error);
+    }
   };
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -52,13 +43,15 @@ export default function PostPage() {
       <Main>
         <PostSection>
           <AllInfo>
-            <Text font="LabelLarge">총 2개의 사업 아이템</Text>
-            <a href="/write" style={{ height: '100%' }}>
-              <Button style={{ height: '100%' }}>사업 아이템 작성하기</Button>
-            </a>
+            <Text font="LabelLarge">총 {itemData.length}개의 사업 아이템</Text>
+            <div>
+              <a href="/write" style={{ height: '100%' }}>
+                <Button style={{ height: '100%' }}>사업 아이템 작성하기</Button>
+              </a>
+            </div>
           </AllInfo>
           <PostList>
-            {itemData?.length ? (
+            {itemData.length ? (
               itemData.map((item, index) => (
                 <ItemBox
                   key={item.business_id}
@@ -69,12 +62,12 @@ export default function PostPage() {
                     <Text font="LabelLarge" color="Blue500">
                       {item.business_name}
                     </Text>
-                    <Text font="BodyLarge">{item.one_liner}</Text>
+                    <Text font="BodyLarge">{item.one_line_introduction}</Text>
                     <TagList>
                       {item.tags.map((tag) => (
-                        <Tag key={tag.id}>
+                        <Tag key={tag.tag_id}>
                           <Text font="LabelSmall" color="Gray700">
-                            #{tag.tagName}
+                            #{tag.tag_name}
                           </Text>
                         </Tag>
                       ))}
@@ -86,7 +79,7 @@ export default function PostPage() {
                     </Text>
                     <PriceFrame>
                       <Text font="TitleSmall" color="Blue500">
-                        {item.total_investment.toLocaleString('en')}
+                        {item.number_of_data ? item.number_of_data.toLocaleString('en') : '0'}
                       </Text>
                       <Text font="LabelLarge" color="Blue500">
                         원
@@ -96,14 +89,16 @@ export default function PostPage() {
                 </ItemBox>
               ))
             ) : (
-              <>사업 아이템 없음</>
+              <Text font="BodyLarge" color="Gray600">
+                사업 아이템 없음
+              </Text>
             )}
           </PostList>
         </PostSection>
       </Main>
     </>
   );
-}
+};
 
 const PriceFrame = styled.div`
   display: flex;
@@ -198,90 +193,4 @@ const Main = styled.main`
   min-height: calc(100dvh - 328px);
 `;
 
-/*
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { getAllBusiness } from '../../apis/business';
-
-interface Tag {
-  tag_id: string;
-  tag_name: string;
-}
-
-interface BusinessItem {
-  business_id: string;
-  business_name: string;
-  one_line_introduction: string;
-  investment_amount: number;
-  tags: Tag[];
-}
-
-export default function MainPage() {
-  const [businessItems, setBusinessItems] = useState<BusinessItem[]>([]);
-
-  useEffect(() => {
-    const fetchBusinessData = async () => {
-      try {
-        const data = await getAllBusiness();
-        setBusinessItems(data);
-      } catch (error) {
-        console.error('사업 아이템 목록 불러오기 실패:', error);
-      }
-    };
-
-    fetchBusinessData();
-  }, []);
-
-  return (
-    <BusinessList>
-      {businessItems.map((item) => (
-        <BusinessCard key={item.business_id}>
-          <h3>{item.business_name}</h3>
-          <p>{item.one_line_introduction}</p>
-          <p>투자 금액: {item.investment_amount.toLocaleString()}원</p>
-          <TagList>
-            {item.tags.map((tag) => (
-              <Tag key={tag.tag_id}>{tag.tag_name}</Tag>
-            ))}
-          </TagList>
-        </BusinessCard>
-      ))}
-    </BusinessList>
-  );
-}
-
-const BusinessList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-`;
-
-const BusinessCard = styled.div`
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  width: 300px;
-
-  h3 {
-    font-size: 20px;
-  }
-
-  p {
-    font-size: 16px;
-  }
-`;
-
-const TagList = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const Tag = styled.span`
-  background: #f1f1f1;
-  padding: 4px 8px;
-  border-radius: 4px;
-`;
-
- */
+export default PostPage;
