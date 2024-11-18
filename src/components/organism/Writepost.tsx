@@ -139,7 +139,7 @@ function Writepost() {
   // 
   const handleSuggestionClick = (suggestion: string) => {
     const existingTag = allTags.find((tag) => tag.tag_name === suggestion);
-  
+
     if (existingTag) {
       setTags((prevTags) => [
         ...prevTags,
@@ -147,7 +147,7 @@ function Writepost() {
       ]);
     }
 
-    setInputValue(''); 
+    setInputValue('');
     setShowSuggestions(false);
     console.log(suggestion);
   };
@@ -204,7 +204,7 @@ function Writepost() {
                   textareaProps={{
                     placeholder: "사업 소개를 입력해주세요.."
                   }}
-                  
+
                 />
               </StyledEditorContainer>
             </InputContainer>
@@ -235,6 +235,7 @@ function Writepost() {
               <TagInputContainer>
                 <SearchWrapper>
                   <Label>분야 태그</Label>
+
                   <Input
                     type="text"
                     id="name"
@@ -249,6 +250,7 @@ function Writepost() {
                   <SearchIcon>
                     <IoSearch />
                   </SearchIcon>
+
                   {showSuggestions && (
                     <SuggestionsList>
                       {filteredSuggestions.length > 0 ? (
@@ -292,7 +294,7 @@ export default Writepost;
 
 const SearchIcon = styled.div`
   position: absolute;
-  top: 65%;
+  top: 70%;
   right: 37%;
   transform: translateY(-50%);
   color: #888888;
