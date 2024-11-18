@@ -1,23 +1,46 @@
 import React from "react";
 import styled from "styled-components";
-import { Text } from "../designSystem/Text";
-import { Colors } from "../../styles/colors";
-import { Logo } from '../../assets';
+import { Text } from "../components/designSystem/Text";
+import { Colors } from "../styles/colors";
+import { Logo } from '../assets';
 
 interface ModalProps {
    close: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ close }) => {
-   React.useEffect(() => {
-      document.body.style.overflow = 'hidden';
-      return () => {
-         document.body.style.overflow = 'auto';
-      };
-   }, []);
+const PreviewModal: React.FC<ModalProps> = ({ close }) => {
+   // React.useEffect(() => {
+   //    const handleKeyDown = (event: KeyboardEvent) => {
+   //       if (event.key === 'Escape') {
+   //          close();
+   //       }
+   //    };
+   //    document.body.style.overflow = 'hidden';
+   //    window.addEventListener('keydown', handleKeyDown);
+
+   //    return () => {
+   //       document.body.style.overflow = 'auto';
+   //       window.removeEventListener('keydown', handleKeyDown);
+   //    };x
+   // }, [close]);
+
+   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+      if (event.target === event.currentTarget) {
+         close();
+      }
+   };
+   
+   const getCurrentDate = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+   };
+
 
    return (
-      <Overlay>
+      <Overlay onClick={handleOverlayClick}>
          <ModalContent>
             <div style={{ color: Colors.Blue500 }}>
                <Logo />
@@ -100,7 +123,7 @@ const Modal: React.FC<ModalProps> = ({ close }) => {
 
                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', margin: '24px 0' }}>
                   <Text font="TitleSmall" color="Blue500" >체결 일자</Text>
-                  <Text font="TitleMedium">0000년 00월 00일</Text>
+                  <Text font="TitleMedium">{getCurrentDate()}</Text>
                </div>
 
                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -145,7 +168,7 @@ const Modal: React.FC<ModalProps> = ({ close }) => {
    );
 };
 
-export default Modal;
+export default PreviewModal;
 
 const DojoImage = styled.img`
    position: absolute;
@@ -175,6 +198,7 @@ const Overlay = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999; 
+
 `;
 
 const ModalContent = styled.div`
@@ -188,6 +212,7 @@ const ModalContent = styled.div`
   width: 100%;
   max-height: 80vh;
   overflow-y: auto; // 콘텐츠 넘치면 스크롤
+  animation: up 0.4s forwards;
 `;
 
 const Contents = styled.div`

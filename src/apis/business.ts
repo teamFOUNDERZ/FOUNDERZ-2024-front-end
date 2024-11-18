@@ -10,8 +10,12 @@ interface BusinessItem {
 }
 
 /**
- * 사업 아이템 목록 조회 API
- * @returns 사업 아이템 목록
+ * @returns 사업 아이템 목록 조회 response
+ * - business_id: string
+ * - business_name: string
+ * - one_line_introduction: string 
+ * - investment_amount: number
+ * - tags: {tag_id: string, tag_name: string}
  */
 export const getAllBusiness = async (): Promise<BusinessItem[]> => {
   const token = getCookie('authToken');
@@ -72,13 +76,13 @@ export const getBusiness = async (businessId: string): Promise<BusinessItemDetai
 
 
 type writeBusinessType = {
-  business_name: string;
-  one_line_introduction: string;
-  business_introduction: string;
-  vision: string;
-  write_purpose: string;
-  tag_ids: string[];
-};
+    business_name: string,
+    one_line_introduction: string,
+    business_introduction: string,
+    vision: string,
+    write_purpose: string,
+    tag_ids: string[]
+}
 
 // 박예빈
 /**
@@ -91,7 +95,7 @@ export const writeBusinessItem = async (data: writeBusinessType, token: string) 
         url: '/api/business/write',
         data: data,
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,  
         },
     });
 };

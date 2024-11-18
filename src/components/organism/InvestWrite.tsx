@@ -3,21 +3,34 @@ import styled from "styled-components";
 import { Text } from "../designSystem/Text";
 import { Colors } from "../../styles/colors";
 import { Input } from "../designSystem/Input";
+import { Button } from "../designSystem/Button";
 import { Remove as RemoveIcon } from "../../assets";
 import { Add_Row } from "../../assets";
 // import MyInfo from "./MyInfo";
 // import Modal from "./PreviewInvest";
-import Modal from "./PreviewInvest";
+import PreviewModal from "../../modals/PreviewModal";
+import ConfirmSendModal from "../../modals/ConfirmSendModal";
 
-import { Button } from "../designSystem/Button";
 // import PreviewInvest from "./PreviewInvest";
+
+
 
 // 자금 투자 계획서 작성
 
 function InvestWrite() {
 
    const [rows, setRows] = useState([{ id: 1, value: '' }]);
-   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false); // 모달 상태 관리
+   const [isConfirmSendModalOpen, setIsConfirmSendModalOpen] = useState(false);
+   const [isUploaded, setIsUploaded] = useState(false);
+
+   const handleFileUpload = (event:any) => {
+      const file = event.target.files[0];
+      if (file) {
+         // 업로드 로직 처리 (필요 시 추가)
+         setIsUploaded(true); // 업로드 완료 상태로 설정
+      }
+   };
 
    const handleAddRow = () => {
       setRows((prevRows) => [
@@ -50,16 +63,27 @@ function InvestWrite() {
    const fundraiser = "이승건"
    const businessItem = "토스"
 
+   const getCurrentDate = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+   };
 
+   const openPreviewModal = () => {
+      setIsPreviewModalOpen(true);
+   };
 
-
-   const openModal = () => {
-      setIsModalOpen(true);
+   const openConfirmSendModal = () => {
+      setIsConfirmSendModalOpen(true);
    };
 
    const closeModal = () => {
-      setIsModalOpen(false);
+      setIsPreviewModalOpen(false);
+      setIsConfirmSendModalOpen(false);
    };
+
    return (
       <>
          <Main>
@@ -237,10 +261,9 @@ function InvestWrite() {
                   </Contents>
                   <Text font="BodyLarge" color="Gray800">본 계약의 성립을 증명하기 위하여 계약서 2부를 작성하여 "A"와 "B"가 기명날인 후 각 1부씩 보관한다.</Text>
                   <DateContents>
-                     <Text font="TitleSmall">0000년 00월 00일</Text>
+                     <Text font="TitleSmall">{getCurrentDate()}</Text>
                      <Text font="BodySmall" color="Gray600">계약 날짜는 계약서를 보낸 후, 자금지원자님이 서명한 날짜로 설정됩니다.</Text>
                   </DateContents>
-                  {/* <MyInfo /> */}
 
 
 
@@ -267,9 +290,18 @@ function InvestWrite() {
                               <Th>도장･사인</Th>
                               <FileTd>
                                  {/* 업로드 완료하면 업로드 완료로 띄우기 */}
-                                 <FileLabel>
-                                    도장 또는 사인 업로드
-                                    <FileInput type="file" accept="image/*" />
+                                 <FileLabel
+                                    style={{
+                                       backgroundColor: isUploaded ? "#1860F0" : "#EEEEEE",
+                                       color: isUploaded ? 'white' : 'black'
+                                    }}
+                                 >
+                                    {isUploaded ? "업로드 완료" : "도장 또는 사인 업로드"}
+                                    <FileInput
+                                       type="file"
+                                       accept="image/*"
+                                       onChange={handleFileUpload}
+                                    />
                                  </FileLabel>
                                  투명 배경 .png형식에 가로 세로 2:1 비율로 업로드 해주세요.
                               </FileTd>
@@ -277,9 +309,8 @@ function InvestWrite() {
                         </Table>
                      </TableWrapper>
                      <ButtonWrapper>
-                        <Button kind="gray" size="large" full onClick={openModal}>자금 투자 계획서 확인하기</Button>
-                       
-                        <Button size="large" full>계약 체결하기</Button>
+                        <Button kind="gray" size="large" style={{ border: 'none' }} full onClick={openPreviewModal}>자금 투자 계획서 미리보기</Button>
+                        <Button size="large" full onClick={openConfirmSendModal}>계약 체결하기</Button>
                      </ButtonWrapper>
                   </MyInfo>
 
@@ -288,7 +319,8 @@ function InvestWrite() {
                </ContentsWrapper>
             </InvestWriteSection>
          </Main>
-          {isModalOpen && <Modal close={closeModal} />}
+         {isPreviewModalOpen && <PreviewModal close={closeModal} />}
+         {isConfirmSendModalOpen && <ConfirmSendModal close={closeModal} />}
       </>
    )
 };
@@ -312,12 +344,11 @@ const FileLabel = styled.label`
    color: black;
    font-size: 16px;
    padding: 12px 16px;
-   background-color: #EEEEEE;
    border-radius: 12px;
+
 `
 
 const FileInput = styled.input`
-   /* padding: 8px 16px; */
    display: none;
 `
 
@@ -479,6 +510,7 @@ const ContentsWrapper = styled.div`
    display: flex;
    flex-direction: column;
    gap: 52px;
+   animation: up 0.4s forwards;
 `
 
 const InvestInfoTd = styled.td`
@@ -496,6 +528,7 @@ const InvestInfoTh = styled.th`
 
 const InvestInfoTable = styled.table`
    width: 90%;
+   animation: up 0.4s forwards;
 `
 
 const Title = styled.div`

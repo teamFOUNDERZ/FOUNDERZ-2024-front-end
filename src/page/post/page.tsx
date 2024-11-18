@@ -33,13 +33,15 @@ const PostPage = () => {
     <>
       <BannerFrame>
         <BannerSection>
-          <PostImg src="/images/post.webp" />
+          
           <Text font="TitleLarge">사업 아이템</Text>
           <Text font="BodyLarge" color="Gray600">
             사업 아이템을 살펴보고, 마음에 드는 사업에 투자해 보세요.
           </Text>
+          <PostImg src="/images/post.webp" />
         </BannerSection>
       </BannerFrame>
+
       <Main>
         <PostSection>
           <AllInfo>
@@ -100,6 +102,8 @@ const PostPage = () => {
   );
 };
 
+
+
 const PriceFrame = styled.div`
   display: flex;
   gap: 2px;
@@ -144,6 +148,7 @@ const ItemBox = styled.a`
 const PostList = styled.section`
   display: flex;
   flex-direction: column;
+  
 `;
 const AllInfo = styled.div`
   display: flex;
@@ -179,6 +184,7 @@ const BannerFrame = styled.div`
   background-color: ${Colors.Blue50};
   overflow: hidden;
 `;
+
 const PostSection = styled.section`
   display: flex;
   gap: 24px;
@@ -187,6 +193,7 @@ const PostSection = styled.section`
   max-width: 1280px;
   width: 100%;
 `;
+
 const Main = styled.main`
   display: flex;
   justify-content: center;

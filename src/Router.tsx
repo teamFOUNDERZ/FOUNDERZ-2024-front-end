@@ -32,11 +32,13 @@ export default function Router() {
         <Route path="/signupType" element={<SignupType />} />
         <Route path="/interest" element={<Interest />} />
         <Route path="/post" element={<PostPage />} />
-        <Route path="/alarm" element={<Alarm />} />
-        <Route path="/my" element={<My />} />
-        <Route path="/write" element={<Writepost />} />
+        <Route path="/post/write" element={<Writepost />} />
         <Route path="/investWrite" element={<InvestWrite />} />
-        <Route path="/z" element={<Zustand />} />
+
+
+        <Route path="/my" element={<My />} />
+        <Route path="/alarm" element={<Alarm />} />
+        <Route path="/investCheck" element={<InvestCheck />} />
       </Routes>
       <Footer />
     </BrowserRouter>

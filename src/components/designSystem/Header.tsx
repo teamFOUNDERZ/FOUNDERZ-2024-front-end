@@ -1,20 +1,79 @@
-import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Logo } from '../../assets';
+import { Colors } from '../../styles/colors';
 import { getCookie } from '../../utils/cookies';
-import HeaderNotLogin from './common/headerNotLogin';  // 로그인 안된 상태의 헤더
-import HeaderLogined from './common/headerLogined';    // 로그인 된 상태의 헤더
+import { Button } from './Button';
 
 export const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // 쿠키에서 accessToken을 확인하여 로그인 상태를 설정
-    const accessToken = getCookie('authToken');
-    setIsLoggedIn(!!accessToken);  // accessToken이 있으면 로그인 상태로 설정
-  }, []);
+  const accessToken = getCookie('accessToken');
 
   return (
-    <>
-      {isLoggedIn ? <HeaderLogined /> : <HeaderNotLogin />}
-    </>
+    <HeaderBox>
+      <HeaderContent>
+        <Nav>
+          <a href="/" style={{ color: Colors.Blue500 }}>
+            <Logo />
+          </a>
+          <a href="/post">
+            <Button kind="white">사업 아이템</Button>
+          </a>
+          <a href="/alarm">
+            <Button kind="white">내 알림</Button>
+          </a>
+          <a href="/my">
+            <Button kind="white">마이 페이지</Button>
+          </a>
+        </Nav>
+        <UserBox>
+          {accessToken ? (
+            <ProfileImg src="/images/3.webp" />
+          ) : (
+            <>
+              <a href="/signup">
+                <Button kind="white">회원가입</Button>
+              </a>
+              <a href="/login">
+                <Button>로그인</Button>
+              </a>
+            </>
+          )}
+        </UserBox>
+      </HeaderContent>
+    </HeaderBox>
   );
 };
+
+const ProfileImg = styled.img`
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 20px;
+  background-color: ${Colors.Gray50};
+  border: 1px solid ${Colors.Gray100};
+`;
+const UserBox = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const HeaderBox = styled.header`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid ${Colors.Gray100};
+  position: fixed;
+  background-color: ${Colors.White};
+  z-index: 10;
+`;
+const HeaderContent = styled.div`
+  width: 100%;
+  max-width: 1280px;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const Nav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+`;
