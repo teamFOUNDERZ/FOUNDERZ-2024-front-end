@@ -29,6 +29,10 @@ export default function PostPage() {
     },
   ]);
 
+
+
+
+
   const getData = async () => {
     const data = await getPost();
     setItemData(data);
@@ -42,18 +46,20 @@ export default function PostPage() {
     <>
       <BannerFrame>
         <BannerSection>
-          <PostImg src="/images/post.webp" />
+          
           <Text font="TitleLarge">사업 아이템</Text>
           <Text font="BodyLarge" color="Gray600">
             사업 아이템을 살펴보고, 마음에 드는 사업에 투자해 보세요.
           </Text>
+          <PostImg src="/images/post.webp" />
         </BannerSection>
       </BannerFrame>
+
       <Main>
         <PostSection>
           <AllInfo>
             <Text font="LabelLarge">총 120개의 사업 아이템</Text>
-            <a href="/write" style={{ height: '100%' }}>
+            <a href="/post/write" style={{ height: '100%' }}>
               <Button style={{ height: '100%' }}>사업 아이템 작성하기</Button>
             </a>
           </AllInfo>
@@ -96,7 +102,7 @@ export default function PostPage() {
                 </ItemBox>
               ))
             ) : (
-              <>사업 아이템 없음</>
+              <Text font='LabelLarge'  color='Gray500' style={{ display: 'flex', justifyContent: 'center'}}>사업 아이템 없음</Text>
             )}
           </PostList>
         </PostSection>
@@ -104,6 +110,8 @@ export default function PostPage() {
     </>
   );
 }
+
+
 
 const PriceFrame = styled.div`
   display: flex;
@@ -149,6 +157,7 @@ const ItemBox = styled.a`
 const PostList = styled.section`
   display: flex;
   flex-direction: column;
+  
 `;
 const AllInfo = styled.div`
   display: flex;
@@ -184,6 +193,7 @@ const BannerFrame = styled.div`
   background-color: ${Colors.Blue50};
   overflow: hidden;
 `;
+
 const PostSection = styled.section`
   display: flex;
   gap: 24px;
@@ -192,6 +202,7 @@ const PostSection = styled.section`
   max-width: 1280px;
   width: 100%;
 `;
+
 const Main = styled.main`
   display: flex;
   justify-content: center;

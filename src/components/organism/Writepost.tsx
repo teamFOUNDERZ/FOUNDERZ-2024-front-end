@@ -8,11 +8,13 @@ import { IoSearch } from 'react-icons/io5';
 import MdEditor from '@uiw/react-md-editor';
 import { getTag } from '../../apis/getTag';
 import { writeBusinessItem } from '../../apis/business';
+import { useNavigate } from 'react-router-dom';
 
 // 사업 아이템 작성
 
 
 function Writepost() {
+  const Navigate = useNavigate();
   // 게시물 정보를 관리하는 상태 정의
   const [title, setTitle] = useState<string>('');
   const [introduce, SetIntrodcue] = useState<string>('');
@@ -49,7 +51,7 @@ function Writepost() {
     }
   };
 
-  localStorage.setItem('token', 'v2.local.gCfKE_tZQBkTiGKmp-E9eyDk9frfFFahgjO8pdjK0WJ1we6ln3Z2eQReB517aXByccKPQy5wJ8VEgvUpLmpj3OA6TIUhZ6iRY1lcds4whWJlBAAiGxdnIjxbLqKOYQ8Rn7X8u5h6MGy4gtBLtMEhJ1JmR3manul1Sx2MX4sY-UJUfzjVmUZzvpCnrPGi6PCOmZ6IeTvTKePjX0rcEB_v2Q.eyJraWQiOiI5ODQ3OWFmMy1mNmJiLTRiZDQtOWY4Ni0zYTRiODlhZGVmYmIifQ');
+  localStorage.setItem('token', 'v2.local.p0UsxEeeznj_XEX1wTfcciv-6ZrB5rRkmxuPY5h3SSQO5HMe8XKoHncCGS-onRM0oLndIP8qiCGysqfnzjEYatQJ9dRT0QHe0uKX6kthUaBm5dP9JF8KCeLKd2LxzPQPDzhhzu_NBgu-6H6HmxZ0AbYPlxkYGIntPVOubfSq_Ix0fgDMFwn_wsvuo6LVfRMdEDJM_zsxiUnSEJfyjcDQsg.eyJraWQiOiI3OGQyZDMxYi1mM2E4LTRhMmUtYWEwOC03MTMzNzA0ZTUwMDQifQ');
 
   // 폼 제출 함수
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,6 +71,8 @@ function Writepost() {
       return;
     }
 
+  
+
     try {
       const response = await writeBusinessItem({
         business_name: title,
@@ -79,8 +83,10 @@ function Writepost() {
         tag_ids: tags.map(tag => tag.tag_id), // tag_id만 전달
       }, token);
       console.log('사업 아이템 작성 성공:', response);
+      Navigate('/post');
     } catch (error: any) {
       console.error('사업 아이템 작성 실패:', error);
+      alert('작성에 실패하였습니다. 한 번 더 자세히 확인해주세요.');
       if (error.response) {
         console.error('에러:', error.response.data);
       }
@@ -311,6 +317,7 @@ const Main = styled.main`
   display: flex;
   justify-content: center;
   min-height: calc(100dvh - 328px);
+  animation: up 0.4s forwards;
 `;
 
 const StyledEditorContainer = styled.div`
