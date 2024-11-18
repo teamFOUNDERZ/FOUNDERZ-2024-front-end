@@ -1,54 +1,60 @@
 import React from "react";
 import styled from "styled-components";
 import Logo from "../../../assets/Img/TestingLogo.png";
+import { AiOutlineUser } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../Button";
 
-function HeaderNotLogin() {
+
+function HeaderLogined() {
   const navigate = useNavigate();
 
-  const toLogin = () => {
+  const Login = () => {
     navigate("/login");
   };
 
-  const toSignUp = () => {
-    navigate("/signup");
+  const Signup = () => {
+    navigate("/signup")
   };
 
-  const Post = () => {
-    navigate("/Post");
+  const Home = () => {
+    navigate("/")
   };
 
   return (
-    <HeaderBox>
-      <HeaderContent>
-        <Nav>
-          <a href="/" style={{ color: Colors.Blue500 }}>
-            <Logo />
-          </a>
-        </Nav>
-        <UserBox>
-            <>
-              <a href="/signup">
-                <Button kind="white">회원가입</Button>
-              </a>
-              <a href="/login">
-                <Button>로그인</Button>
-              </a>
-            </>
-        </UserBox>
-      </HeaderContent>
-    </HeaderBox>
+    <Container>
+      <ItemWrapper>
+        <LeftWrapper>
+          <NavButton>
+            <img onClick={Home} src={Logo} />
+          </NavButton>
+        </LeftWrapper>
+        <RightWrapper>
+          <NavButton>
+            <ButtonWrapper>
+                <Button kind="white" onClick={Signup}>회원가입</Button>
+                <Button onClick={Login}>로그인</Button>
+            </ButtonWrapper>
+          </NavButton>
+        </RightWrapper>
+      </ItemWrapper>
+    </Container>
   );
 }
 
-export default HeaderNotLogin;
+export default HeaderLogined;
 
 const Container = styled.div`
-  position: fixed;
   width: 100%;
   height: 60px;
   background: white;
   border-bottom: 1px solid #eeeeee;
+  margin: 0;
+  padding: 0;
+`;
+
+const ButtonWrapper = styled.div`
+  gap: 100px
 `;
 
 const ItemWrapper = styled.div`
@@ -92,15 +98,4 @@ const RightWrapper = styled.div`
     background: #ececec;
     border-radius: 50%;
   }
-`;
-
-const LoginButton = styled.button`
-  width: max-content;
-  padding: 7px 10px;
-  color: white;
-  text-align: center;
-  border-radius: 10px;
-  background: #1860f0;
-  border: none;
-  cursor: pointer;
 `;
