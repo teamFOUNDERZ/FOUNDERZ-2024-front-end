@@ -1,103 +1,60 @@
-import React from "react";
-import styled from "styled-components";
-import Logo from "../../../assets/Img/TestingLogo.png";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { Logo } from '../../../assets';
+import { Colors } from '../../../styles/colors';
+import { getCookie } from '../../../utils/cookies';
+import { Button } from '../Button';
 
-function HeaderNotLogin() {
-  const navigate = useNavigate();
-
-  const toLogin = () => {
-    navigate("/login");
-  };
-
-  const toSignUp = () => {
-    navigate("/signup");
-  };
-
-  const Post = () => {
-    navigate("/Post");
-  };
+export default function headerNotLogined () {
 
   return (
-    <>
-      <Container>
-        <ItemWrapper>
-          <LeftWrapper>
-            <NavButton>
-              <img src={Logo} />
-            </NavButton>
-            <NavButton onClick={Post}>사업 아이템</NavButton>
-          </LeftWrapper>
-          <RightWrapper>
-            <NavButton onClick={toSignUp}>회원가입</NavButton>
-            <LoginButton onClick={toLogin}>로그인</LoginButton>
-          </RightWrapper>
-        </ItemWrapper>
-      </Container>
-    </>
+    <HeaderBox>
+      <HeaderContent>
+        <Nav>
+          <a href="/" style={{ color: Colors.Blue500 }}>
+            <Logo />
+          </a>
+          <a href="/post">
+            <Button kind="white">사업 아이템</Button>
+          </a>
+        </Nav>
+        <UserBox>
+            <>
+              <a href="/signup">
+                <Button kind="white">회원가입</Button>
+              </a>
+              <a href="/login">
+                <Button>로그인</Button>
+              </a>
+            </>
+        </UserBox>
+      </HeaderContent>
+    </HeaderBox>
   );
-}
+};
 
-export default HeaderNotLogin;
-
-const Container = styled.div`
-  position: fixed;
+const UserBox = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const HeaderBox = styled.header`
   width: 100%;
-  height: 60px;
-  background: white;
-  border-bottom: 1px solid #eeeeee;
-`;
-
-const ItemWrapper = styled.div`
-  width: 1200px;
-  height: 60px;
-  margin: 0 auto;
-`;
-
-const LeftWrapper = styled.div`
-  width: max-content;
-  height: 60px;
   display: flex;
   justify-content: center;
+  border-bottom: 1px solid ${Colors.Gray100};
+  position: fixed;
+  background-color: ${Colors.White};
+  z-index: 10;
+`;
+const HeaderContent = styled.div`
+  width: 100%;
+  max-width: 1280px;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const Nav = styled.nav`
+  display: flex;
   align-items: center;
   gap: 32px;
-  float: left;
-`;
-
-const NavButton = styled.button`
-  display: flex;
-  justify-content: center;
-  width: max-content;
-  cursor: pointer;
-  border: none;
-  background: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const RightWrapper = styled.div`
-  width: max-content;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-  float: right;
-
-  #profile {
-    font-size: 30px;
-    background: #ececec;
-    border-radius: 50%;
-  }
-`;
-
-const LoginButton = styled.button`
-  width: max-content;
-  padding: 7px 10px;
-  color: white;
-  text-align: center;
-  border-radius: 10px;
-  background: #1860f0;
-  border: none;
-  cursor: pointer;
 `;

@@ -10,17 +10,17 @@ export default function Alarm(){
                 <div>
                     <List>
                         <p style={{ ...Fonts['BodyMedium'], color: Colors.Blue500}}>투자요청</p>
-                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>최승우님이 “토스"에 100,000원 투자를 원하고 있어요.</p>
+                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>김승원님이 “토스"에 100,000원 투자를 원하고 있어요.</p>
                         <p style={{ ...Fonts['BodySmall'], color: Colors.Gray600}}>2024.07.17</p>
                     </List>
                     <List>
-                        <p style={{ ...Fonts['BodyMedium'], color: Colors.Blue500}}>투자요청</p>
-                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>최승우님이 “토스"에 100,000원 투자를 원하고 있어요.</p>
+                        <p style={{ ...Fonts['BodyMedium'], color: Colors.Blue500}}>자금 투자 계획서 확인</p>
+                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>"토스"의 이승건님이 자금 투자 계획서 작성을 마쳤어요.<br/>이상 내용이 없는지 확인하세요.</p>
                         <p style={{ ...Fonts['BodySmall'], color: Colors.Gray600}}>2024.07.17</p>
                     </List>
                     <List>
-                        <p style={{ ...Fonts['BodyMedium'], color: Colors.Blue500}}>투자요청</p>
-                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>최승우님이 “토스"에 100,000원 투자를 원하고 있어요.</p>
+                        <p style={{ ...Fonts['BodyMedium'], color: Colors.Blue500}}>자금 투자 계약 체결</p>
+                        <p style={{ ...Fonts['BodyLarge'], color: Colors.Black}}>김승원님의 100,000원 자금 투자 계약이 체결되었어요.<br/>자금 투자 계획서를 다운받아 보관해 주세요.</p>
                         <p style={{ ...Fonts['BodySmall'], color: Colors.Gray600}}>2024.07.17</p>
                     </List>
                 </div>
@@ -41,7 +41,7 @@ const Content = styled.div`
     width: 50%;
     height: fit-content;
     justify-content: center;
-    padding-top: 120px;
+    padding: 120px;
     display: flex;
     flex-direction: column;
     gap: 40px;

@@ -52,7 +52,7 @@ export default function PostPage() {
       <Main>
         <PostSection>
           <AllInfo>
-            <Text font="LabelLarge">총 120개의 사업 아이템</Text>
+            <Text font="LabelLarge">총 2개의 사업 아이템</Text>
             <a href="/write" style={{ height: '100%' }}>
               <Button style={{ height: '100%' }}>사업 아이템 작성하기</Button>
             </a>
@@ -197,3 +197,91 @@ const Main = styled.main`
   justify-content: center;
   min-height: calc(100dvh - 328px);
 `;
+
+/*
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { getAllBusiness } from '../../apis/business';
+
+interface Tag {
+  tag_id: string;
+  tag_name: string;
+}
+
+interface BusinessItem {
+  business_id: string;
+  business_name: string;
+  one_line_introduction: string;
+  investment_amount: number;
+  tags: Tag[];
+}
+
+export default function MainPage() {
+  const [businessItems, setBusinessItems] = useState<BusinessItem[]>([]);
+
+  useEffect(() => {
+    const fetchBusinessData = async () => {
+      try {
+        const data = await getAllBusiness();
+        setBusinessItems(data);
+      } catch (error) {
+        console.error('사업 아이템 목록 불러오기 실패:', error);
+      }
+    };
+
+    fetchBusinessData();
+  }, []);
+
+  return (
+    <BusinessList>
+      {businessItems.map((item) => (
+        <BusinessCard key={item.business_id}>
+          <h3>{item.business_name}</h3>
+          <p>{item.one_line_introduction}</p>
+          <p>투자 금액: {item.investment_amount.toLocaleString()}원</p>
+          <TagList>
+            {item.tags.map((tag) => (
+              <Tag key={tag.tag_id}>{tag.tag_name}</Tag>
+            ))}
+          </TagList>
+        </BusinessCard>
+      ))}
+    </BusinessList>
+  );
+}
+
+const BusinessList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+`;
+
+const BusinessCard = styled.div`
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  width: 300px;
+
+  h3 {
+    font-size: 20px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+`;
+
+const TagList = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const Tag = styled.span`
+  background: #f1f1f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+`;
+
+ */

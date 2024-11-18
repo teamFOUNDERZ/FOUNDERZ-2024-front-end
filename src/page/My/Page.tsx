@@ -10,26 +10,22 @@ export default function My(){
                 <Textcontiner2>
                     <Textcontiner>
                         <SemiBold24B>개인</SemiBold24B>
-                        <SemiBold48>최승우</SemiBold48>
+                        <SemiBold48>김승원</SemiBold48>
                     </Textcontiner>
                     <Textcontiner>
                         <SemiBold16>아이디</SemiBold16>
-                        <SemiBold20>seungwoo</SemiBold20>
+                        <SemiBold20>seungwon</SemiBold20>
                     </Textcontiner>
                     <Textcontiner>
                         <SemiBold16>전화번호</SemiBold16>
-                        <SemiBold20>010-1234-5678</SemiBold20>
+                        <SemiBold20>010-2977-8517</SemiBold20>
                     </Textcontiner>
                 </Textcontiner2>
                 <Field>
                     <SemiBold16>관심분야</SemiBold16>
                     <Tagcontainer>
                         <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
+                        <Tag>#IT</Tag>
                     </Tagcontainer>
                 </Field>
                 <Box>
@@ -43,7 +39,7 @@ export default function My(){
                     <SemiBold16m>받은 투자 요청</SemiBold16m>
                     <Box>
                         <div>
-                            <SemiBold16B>최승우님</SemiBold16B>
+                            <SemiBold16B>김승원님</SemiBold16B>
                             <SemiBold24>100,000원 투자 요청</SemiBold24>
                         </div>
                         <Button>충전하기</Button>

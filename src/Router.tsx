@@ -36,6 +36,7 @@ export default function Router() {
         <Route path="/my" element={<My />} />
         <Route path="/write" element={<Writepost />} />
         <Route path="/investWrite" element={<InvestWrite />} />
+        <Route path="/z" element={<Zustand />} />
       </Routes>
       <Footer />
     </BrowserRouter>
