@@ -41,7 +41,7 @@ const Content = styled.div`
     width: 50%;
     height: fit-content;
     justify-content: center;
-    padding: 136px 40px 346px 40px;
+    padding-top: 120px;
     display: flex;
     flex-direction: column;
     gap: 40px;

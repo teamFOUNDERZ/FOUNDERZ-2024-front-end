@@ -32,6 +32,8 @@ export default function Router() {
         <Route path="/signupType" element={<SignupType />} />
         <Route path="/interest" element={<Interest />} />
         <Route path="/post" element={<PostPage />} />
+        <Route path="/alarm" element={<Alarm />} />
+        <Route path="/my" element={<My />} />
         <Route path="/write" element={<Writepost />} />
         <Route path="/investWrite" element={<InvestWrite />} />
       </Routes>

@@ -50,7 +50,7 @@ const Main = styled.main`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 136px 20px 650px 20px;
+    padding: 136px 20px 70vh 20px;
     height: calc(100dvh - 64px);
     background: #fff;
 `;
