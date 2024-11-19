@@ -1,5 +1,5 @@
 import { instance } from "./interceptor";
-import { EventSourcePolyfill } from "event-source-polyfill";
+// import { EventSourcePolyfill } from "event-source-polyfill";
 
 /**
  * @returns 알림 단일 조회 response
@@ -44,14 +44,14 @@ export const getAllNotice = async (token: string) => {
 /**
  * @returns 알림 실시간 구독 response (sse)
  */
-export const subscribeNotice = (token: string) => {
-    const eventSource = new EventSourcePolyfill(
-        '/api/notices/subscribe',
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,  
-            }
-        }
-    );
-    return eventSource;
-};
+// export const subscribeNotice = (token: string) => {
+//     const eventSource = new EventSourcePolyfill(
+//         '/api/notices/subscribe',
+//         {
+//             headers: {
+//                 Authorization: `Bearer ${token}`,  
+//             }
+//         }
+//     );
+//     return eventSource;
+// };

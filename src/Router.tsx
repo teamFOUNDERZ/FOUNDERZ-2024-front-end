@@ -9,7 +9,7 @@ import PostPage from './page/post/page';
 import Signup from './page/signup';
 import Infomation from './page/signup/infomation';
 import Interest from './page/signup/interest';
-import SignupType from './page/signup/signupType';
+import SignupType from './page/signup/signUpType';
 import Alarm from './page/Alarm/Page';
 import My from './page/My/Page';
 import './styles/globals.css';
