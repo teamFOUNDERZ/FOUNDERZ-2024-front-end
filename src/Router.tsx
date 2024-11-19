@@ -24,7 +24,8 @@ export default function Router() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/post/2" element={<DetailPost/>} />
+        {/* 동적 경로로 변경 */}
+        <Route path="/post/:id" element={<DetailPost />} /> 
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LogInPage />} />
         <Route path="/signup" element={<Signup />} />
@@ -32,10 +33,8 @@ export default function Router() {
         <Route path="/signupType" element={<SignupType />} />
         <Route path="/interest" element={<Interest />} />
         <Route path="/post" element={<PostPage />} />
-        <Route path="/post/write" element={<Writepost />} />
+        <Route path="/write" element={<Writepost />} />
         <Route path="/investWrite" element={<InvestWrite />} />
-
-
         <Route path="/my" element={<My />} />
         <Route path="/alarm" element={<Alarm />} />
         <Route path="/investCheck" element={<InvestCheck />} />

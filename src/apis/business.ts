@@ -1,6 +1,7 @@
 import { instance } from "./interceptor";
 import { getCookie } from "../utils/cookies";
 
+// Interface for business item list
 interface BusinessItem {
   business_id: string;
   business_name: string;
@@ -25,28 +26,31 @@ export const getAllBusiness = async (): Promise<BusinessItem[]> => {
     return [];
   }
 
-  const response = await instance({
-    method: 'GET',
-    url: '/api/business',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await instance({
+      method: 'GET',
+      url: '/api/business',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  return response.data.data as BusinessItem[];
+    return response.data.data as BusinessItem[];
+  } catch (error) {
+    console.error('Error fetching business items:', error);
+    return [];
+  }
 };
-
-
 
 export interface BusinessItemDetail {
   business_id: string;
   business_name: string;
   one_line_introduction: string;
   tags: { tag_id: string; tag_name: string }[];
-  vison: string;
+  vision: string;
   write_purpose: string;
   business_introduction: string;
-  investment_amount: number;
+  investment_amount: 0;
 }
 
 /**
@@ -59,20 +63,24 @@ export const getBusiness = async (businessId: string): Promise<BusinessItemDetai
 
   if (!token) {
     console.error('Token is missing');
-    return;
+    return undefined;
   }
 
-  const response = await instance({
-    method: 'GET',
-    url: `/api/business/${businessId}`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await instance({
+      method: 'GET',
+      url: `/api/business/${businessId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  return response.data as BusinessItemDetail;
+    return response.data as BusinessItemDetail;
+  } catch (error) {
+    console.error('Error fetching business details:', error);
+    return undefined;
+  }
 };
-
 
 
 type writeBusinessType = {

@@ -23,22 +23,28 @@ function HeaderLogined() {
 
   return (
     <Container>
-      <ItemWrapper>
-        <LeftWrapper>
-          <NavButton>
-            <img onClick={Home} src={Logo} />
-          </NavButton>
-        </LeftWrapper>
-        <RightWrapper>
-          <NavButton>
-            <ButtonWrapper>
-                <Button kind="white" onClick={Signup}>회원가입</Button>
-                <Button onClick={Login}>로그인</Button>
-            </ButtonWrapper>
-          </NavButton>
-        </RightWrapper>
-      </ItemWrapper>
-    </Container>
+    <HeaderBox>
+      <HeaderContent>
+        <Nav>
+          <a href="/" style={{ color: Colors.Blue500 }}>
+            <Logo />
+          </a>
+          <a href="/post">
+            <Button kind="white">사업 아이템</Button>
+          </a>
+        </Nav>
+        <UserBox>
+            <>
+              <a href="/signup">
+                <Button kind="white">회원가입</Button>
+              </a>
+              <a href="/login">
+                <Button>로그인</Button>
+              </a>
+            </>
+        </UserBox>
+      </HeaderContent>
+    </HeaderBox>
   );
 }
 
