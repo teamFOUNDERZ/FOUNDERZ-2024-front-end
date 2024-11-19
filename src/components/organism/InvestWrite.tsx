@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import styled from "styled-components";
 import { Text } from "../designSystem/Text";
 import { Colors } from "../../styles/colors";
@@ -6,13 +6,15 @@ import { Input } from "../designSystem/Input";
 import { Button } from "../designSystem/Button";
 import { Remove as RemoveIcon } from "../../assets";
 import { Add_Row } from "../../assets";
-// import MyInfo from "./MyInfo";
-// import Modal from "./PreviewInvest";
 import PreviewModal from "../../modals/PreviewModal";
 import ConfirmSendModal from "../../modals/ConfirmSendModal";
+import axios from "axios";
+
+import { postWriteAfreement } from "../../apis/agreement";
+import { getInvestmentInfo } from "../../apis/investment";
+import { Navigate } from "react-router-dom";
 
 // import PreviewInvest from "./PreviewInvest";
-
 
 
 // 자금 투자 계획서 작성
@@ -20,16 +22,69 @@ import ConfirmSendModal from "../../modals/ConfirmSendModal";
 function InvestWrite() {
 
    const [rows, setRows] = useState([{ id: 1, value: '' }]);
-   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false); // 모달 상태 관리
+   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
    const [isConfirmSendModalOpen, setIsConfirmSendModalOpen] = useState(false);
    const [isUploaded, setIsUploaded] = useState(false);
 
-   const handleFileUpload = (event:any) => {
-      const file = event.target.files[0];
-      if (file) {
-         // 업로드 로직 처리 (필요 시 추가)
-         setIsUploaded(true); // 업로드 완료 상태로 설정
+   // 정보 관리 
+   const [investmentId, setInvestmentId] = useState<string>('');
+   const [investorName, setInvestorName] = useState<string>('');
+   const [investeeName, setInvesteeName] = useState<string>('');
+   const [investmentAmount, setInvestmentAmount] = useState<string>('');
+   const [businessName, setBusinessName] = useState<string>('');
+
+   const [finalPeriod, setFinalPeriod] = useState<string>(''); // 최종 계약 기간
+   const [preferPeriod, setPreferPeriod] = useState<string>(''); // 선호 계약 기간
+   const [profit, setProfit] = useState<string>(''); // 매출액
+   const [depositDay, setDpositDay] = useState<string>(''); // 익월
+   const [repaymentDelayDay, setRepaymentDelayDay] = useState<string>(''); // 상환 지체일
+   const [delinquentQuarter, setDelinquentQuarter] = useState<string>(''); // 연체 분기
+   const [delinquentDamages, setDelinquentDamages] = useState<string>(''); // 연체 손해금
+   const [specialMatters, setspecialMatters] = useState<string[]>([]); // 특이 사항
+   const [address, setAddress] = useState<string>(''); // 주소
+   const [representativeName, setRepresentativeName] = useState<string>(''); // 사업 대표자 이름 & 얍얍
+   const [contact, setContact] = useState<string>(''); //  전화번호
+   const [signatureUrl, setSignatureUrl] = useState<string>(''); // 이미지 url
+   const [repaymentForms, setRepaymentForms] = useState([
+      {
+         investment_id: '',
+         repayment_amount: '',
+         repayment_date: ''
       }
+   ]);
+
+   const [year, setYear] = useState('');
+   const [month, setMonth] = useState('');
+   const [day, setDay] = useState('');
+
+   const handleChange = (type: string, value: SetStateAction<string>) => {
+      let newFinalPeriod = '';
+
+
+      if (type === 'year') {
+         setYear(value);
+         newFinalPeriod = `${value ? value + '.' : ''}${month ? month + '.' : ''}${day || ''}`;
+      } else if (type === 'month') {
+         setMonth(value);
+         newFinalPeriod = `${year ? year + '.' : ''}${value ? value + '.' : ''}${day || ''}`;
+      } else if (type === 'day') {
+         setDay(value);
+         newFinalPeriod = `${year ? year + '.' : ''}${month ? month + '.' : ''}${value || ''}`;
+      }
+
+      setFinalPeriod(newFinalPeriod);
+   };
+
+
+   // 입력값 변경 시 호출
+   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+      const updatedRows = rows.map((row) =>
+         row.id === id ? { ...row, value: e.target.value } : row
+      );
+      setRows(updatedRows);
+      // 특이사항 값 배열로 업데이트
+      const updatedSpecialMatters = updatedRows.map((row) => row.value).filter(Boolean);
+      setspecialMatters(updatedSpecialMatters); // 특이사항 배열 업데이트
    };
 
    const handleAddRow = () => {
@@ -47,7 +102,24 @@ function InvestWrite() {
          id: index + 1,
       }));
       setRows(updatedRows);
+      const updatedSpecialMatters = updatedRows.map((row) => row.value).filter(Boolean);
+      setspecialMatters(updatedSpecialMatters);
    };
+
+
+
+   const handleFileUpload = (event: any) => {
+      const file = event.target.files[0];
+      const value = event.target.value;
+      if (file) {
+         // 업로드 로직 처리 (필요 시 추가)
+         const imageUrl = URL.createObjectURL(file);
+
+         setSignatureUrl(imageUrl);
+         setIsUploaded(true); // 업로드 완료 상태로 설정
+      }
+   };
+
 
    const investInfoHeaders = [
       "자금지원자",
@@ -57,11 +129,6 @@ function InvestWrite() {
       "사업 아이템"
    ];
 
-   const fundProvider = "이태윤"
-   const preferredContractPeriod = "2024.10.31"
-   const fundAmount = "100,000,000,000"
-   const fundraiser = "이승건"
-   const businessItem = "토스"
 
    const getCurrentDate = () => {
       const today = new Date();
@@ -84,13 +151,115 @@ function InvestWrite() {
       setIsConfirmSendModalOpen(false);
    };
 
+   const handleInvestmentIdChange = (index: number, value: string) => {
+      const updatedForms = [...repaymentForms];
+      updatedForms[index].investment_id = value;
+      setRepaymentForms(updatedForms);
+   };
+
+
+
+
+   //   useEffect(() => {
+   //    const fetchInvestmentData = async () => {
+   //      try {
+   //        const token = "v2.local.mLe913FRoP70qthLoTlXIWg7vkqXAmY04dK3ofaHal86zNC_yP_snAPvCeoPeS8Ea3GtEwY_ka6jlwBTZvj94z-yjVEL-E88rFWaFXFJRUUChNBdQeOghi5HpUP7_FymjK17P8YxtTfp5996-ByL3KSm4INNnTdyDfnvcxPowU_MshzoAUO_DB_gmi7EuMHQgLIApxxT2MGtFe3tF-5TWA.eyJraWQiOiI3NmZmYmZlZi1lNGRiLTQwNzUtYTFiNS03MzI3ZTFlZTEwNmUifQ";
+
+   //        const investmentData = await getInvestmentInfo(token);
+   //        console.log('투자 정보:', investmentData);
+
+   //        if (investmentData && investmentData.length > 0) {
+   //          const firstInvestment = investmentData[0];
+   //          setInvestmentId(firstInvestment.investment_id);
+   //          setInvestorName(firstInvestment.investor_name);
+   //          setInvesteeName(firstInvestment.investee_name);
+   //          setInvestmentAmount(firstInvestment.investment_amount.toString());
+   //          setBusinessName(firstInvestment.business_name);
+   //          setPreferPeriod(firstInvestment.prefer_contract_period);
+   //        }
+   //      } catch (error) {
+   //        console.error('투자 정보를 가져오는 데 실패했습니다:', error);
+   //      }
+   //    };
+
+   //    fetchInvestmentData();
+   //  }, []);
+
+   const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      console.log('최종 계약 기간:', finalPeriod);
+      console.log('선호 계약 기간:', preferPeriod);
+      console.log('매출액:', profit);
+      console.log('익월:', depositDay);
+      console.log('상환 지체일:', repaymentDelayDay);
+      console.log('연체 분기:', delinquentQuarter);
+      console.log('연체 손해금:', delinquentDamages);
+      console.log('특이 사항:', specialMatters);
+      console.log('주소:', address);
+      console.log('사업 대표자 이름:', representativeName);
+      console.log('전화번호:', contact);
+      console.log('서명 이미지 URL:', signatureUrl);
+      console.log('상환 내역:', repaymentForms);
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+         console.error('토큰이 없습니다.');
+         return;
+      }
+
+      const agreementData = {
+         investment_id: 'string',
+         investor_name: 'string',
+         investee_name: 'string',
+         investment_amount: parseInt(profit),
+         prefer_contract_period: preferPeriod,
+         finally_contract_period: finalPeriod,
+         profit: parseInt(profit),
+         deposit_day: parseInt(depositDay),
+         repayment_delay_day: parseInt(repaymentDelayDay),
+         delinquent_quarter: parseInt(delinquentQuarter),
+         delinquent_damages: parseInt(delinquentDamages),
+         special_contract_matters: specialMatters,
+         address: address,
+         representative_name: representativeName,
+         contact: contact,
+         signature_image_url: signatureUrl,
+      };
+
+
+      const repaymentData = repaymentForms.map((form) => ({
+         investment_id: form.investment_id,
+         repayment_amount: parseInt(form.repayment_amount),
+         repayment_date: form.repayment_date,
+      }));
+
+      try {
+         const response = await writeAgreementForm(
+            { agreement_form: agreementData, repayment_forms: repaymentData },
+            token
+         );
+         console.log('계약서 작성 성공:', response);
+      } catch (error: any) {
+         console.error('계약서 작성 실패:', error);
+         alert('작성에 실패하였습니다. 다시 확인해주세요.');
+         if (error.response) {
+            console.error('에러:', error.response.data);
+         }
+      }
+   };
+
+
+
+
    return (
       <>
          <Main>
             <InvestWriteSection>
+
                <Title>
                   <Text font="TitleLarge">자금 투자 계약서 작성</Text>
-                  <Text font="BodyMedium" color="Gray700">자금지원자 {fundProvider}님(이하 “A”라 한다)과 “토스” 자금유치자 {fundraiser}님(이하 “B”라 한다)은 상호간에 자금 투자 지원과 관련한 계약을 다음과 같이 체결한다.</Text>
+                  <Text font="BodyMedium" color="Gray700">자금지원자 {investorName}님(이하 “A”라 한다)과 “토스” 자금유치자 {investeeName}님(이하 “B”라 한다)은 상호간에 자금 투자 지원과 관련한 계약을 다음과 같이 체결한다.</Text>
                </Title>
                <InvestInfoTable>
                   <thead >
@@ -102,15 +271,15 @@ function InvestWrite() {
                   </thead>
                   <tbody>
                      <tr>
-                        <InvestInfoTd>{fundProvider}</InvestInfoTd>
-                        <InvestInfoTd>{preferredContractPeriod} 까지</InvestInfoTd>
-                        <InvestInfoTd>{fundAmount}원</InvestInfoTd>
-                        <InvestInfoTd>{fundraiser}</InvestInfoTd>
-                        <InvestInfoTd>{businessItem}</InvestInfoTd>
+                        <InvestInfoTd>{investorName}</InvestInfoTd>
+                        <InvestInfoTd>{preferPeriod} 까지</InvestInfoTd>
+                        <InvestInfoTd>{investmentAmount}원</InvestInfoTd>
+                        <InvestInfoTd>{investeeName}</InvestInfoTd>
+                        <InvestInfoTd>{businessName}</InvestInfoTd>
                      </tr>
                   </tbody>
                </InvestInfoTable>
-               <ContentsWrapper>
+               <ContentsWrapper onSubmit={handleSubmit}>
                   <Contents>
                      <Text font="TitleSmall">제 1조 [목적]</Text>
                      <Text font="BodyLarge" color="Gray800">본 계약은 "B"의 사업활동에 대한 지원목적으로서 "A"가 자금을 투자하고 이에 대하여 자금회수와 관련된 내용을 규율함을 목적으로 한다.</Text>
@@ -131,9 +300,22 @@ function InvestWrite() {
                            <Tr>
                               <Th>최종계약기간<Div /></Th>
                               <Td>
-                                 <Input style={{ width: '80px' }} /> 년
-                                 <Input style={{ width: '80px' }} /> 월
-                                 <Input style={{ width: '80px' }} /> 일 까지
+                                 <Input
+                                    style={{ width: '80px' }}
+                                    value={year}
+                                    onChange={(e) => handleChange('year', e.target.value)}
+                                 /> 년
+                                 <Input
+                                    style={{ width: '80px' }}
+                                    value={month}
+                                    onChange={(e) => handleChange('month', e.target.value)}
+
+                                 /> 월
+                                 <Input
+                                    style={{ width: '80px' }}
+                                    value={day}
+                                    onChange={(e) => handleChange('day', e.target.value)}
+                                 /> 일 까지
                               </Td>
                            </Tr>
                         </Table>
@@ -148,17 +330,28 @@ function InvestWrite() {
                               <CreTh>{row.id}차 상환</CreTh>
                               <CreTd>
                                  <Test>
-                                    일금 오만원정 (₩ <Input style={{ width: '170px' }} /> ),
-                                    <Input style={{ width: '80px' }} /> 년
-                                    <Input style={{ width: '60px' }} /> 월
-                                    <Input style={{ width: '60px' }} /> 일
+                                    일금 오만원정 (₩
+                                    <Input
+                                       style={{ width: '170px' }}
+                                       value={repaymentForms[index].investment_id}
+                                       onChange={(e) => handleInvestmentIdChange(index, e.target.value)}
+                                    /> ),
+                                    <Input
+                                       style={{ width: '80px' }}
+                                    /> 년
+                                    <Input
+                                       style={{ width: '60px' }}
+                                    /> 월
+                                    <Input
+                                       style={{ width: '60px' }}
+                                    /> 일
                                     <p>/</p>
                                     <p>시간</p>
                                     <Input style={{ width: '60px' }} /> 시
                                     <Input style={{ width: '60px' }} /> 분
                                  </Test>
                                  <Test>
-                                    <CreRemove onClick={() => handleRemoveRow(row.id)}>
+                                    <CreRemove type="button" onClick={() => handleRemoveRow(row.id)}>
                                        <RemoveIcon />
                                     </CreRemove>
 
@@ -166,8 +359,8 @@ function InvestWrite() {
                               </CreTd>
                            </CreTr>
                         ))}
-                        <CreButton onClick={handleAddRow}>
-                           <Add_Row />특이사항 추가하기
+                        <CreButton type="button" onClick={handleAddRow}>
+                           <Add_Row />상환 횟수 추가하기
                         </CreButton>
                      </CreateTableFrame>
 
@@ -176,11 +369,19 @@ function InvestWrite() {
                         <Table>
                            <Tr>
                               <Th>매출액</Th>
-                              <Td><Input style={{ width: '120px' }} /> %</Td>
+                              <Td>
+                                 <Input
+                                    style={{ width: '120px' }}
+                                    onChange={(e) => setProfit(e.target.value)}
+                                 /> %</Td>
                            </Tr>
                            <Tr>
                               <Th>익월</Th>
-                              <Td><Input style={{ width: '120px' }} /> %</Td>
+                              <Td>
+                                 <Input
+                                    style={{ width: '120px' }}
+                                    onChange={(e) => setDpositDay(e.target.value)}
+                                 /> %</Td>
                            </Tr>
                         </Table>
                      </TableWrapper>
@@ -208,15 +409,27 @@ function InvestWrite() {
                         <Table>
                            <Tr>
                               <Th>상환 지체일</Th>
-                              <Td><Input style={{ width: '120px' }} /> 일</Td>
+                              <Td>
+                                 <Input
+                                    style={{ width: '120px' }}
+                                    onChange={(e) => setRepaymentDelayDay(e.target.value)}
+                                 /> 일</Td>
                            </Tr>
                            <Tr>
                               <Th>연체 분기</Th>
-                              <Td><Input style={{ width: '120px' }} /> 분기</Td>
+                              <Td>
+                                 <Input
+                                    style={{ width: '120px' }}
+                                    onChange={(e) => setDelinquentQuarter(e.target.value)}
+                                 /> 분기</Td>
                            </Tr>
                            <Tr>
                               <Th>연체 손해금</Th>
-                              <Td><Input style={{ width: '120px' }} /> %</Td>
+                              <Td>
+                                 <Input
+                                    style={{ width: '120px' }}
+                                    onChange={(e) => setDelinquentDamages(e.target.value)}
+                                 /> %</Td>
                            </Tr>
                         </Table>
                      </TableWrapper>
@@ -239,15 +452,17 @@ function InvestWrite() {
                                  <Input
                                     placeholder="특이사항을 입력해주세요.."
                                     style={{ width: '100%' }}
+                                    value={row.value} // 입력된 값
+                                    onChange={(e) => handleInputChange(e, row.id)} // 값 변경 처리
                                  />
-                                 <CreRemove onClick={() => handleRemoveRow(row.id)}>
+                                 <CreRemove type="button" onClick={() => handleRemoveRow(row.id)}>
                                     <RemoveIcon />
                                  </CreRemove>
                               </CreTd>
                            </CreTr>
                         ))}
-                        <CreButton onClick={handleAddRow}>
-                           <Add_Row />특이사항 추가하기
+                        <CreButton type="button" onClick={handleAddRow}>
+                           <Add_Row />특약사항 추가하기
                         </CreButton>
                      </CreateTableFrame>
                   </Contents>
@@ -264,19 +479,18 @@ function InvestWrite() {
                      <Text font="TitleSmall">{getCurrentDate()}</Text>
                      <Text font="BodySmall" color="Gray600">계약 날짜는 계약서를 보낸 후, 자금지원자님이 서명한 날짜로 설정됩니다.</Text>
                   </DateContents>
-
-
-
-
-
-
                   <MyInfo>
                      <Text font="TitleSmall">개인정보 및 서명</Text>
                      <TableWrapper>
                         <Table>
                            <Tr>
                               <Th>주소</Th>
-                              <InfoTd><Input placeholder="주소를 입력해주세요.." style={{ width: '100%' }} /></InfoTd>
+                              <InfoTd>
+                                 <Input
+                                    placeholder="주소를 입력해주세요.."
+                                    style={{ width: '100%' }}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                 /></InfoTd>
                            </Tr>
                            <Tr>
                               <Th>대표자</Th>
@@ -305,12 +519,28 @@ function InvestWrite() {
                                  </FileLabel>
                                  투명 배경 .png형식에 가로 세로 2:1 비율로 업로드 해주세요.
                               </FileTd>
+                              {/* {signatureUrl && (
+                                 <div>
+                                    <img
+                                       src={signatureUrl}
+                                       alt="Uploaded signature"
+                                       style={{
+                                          width: '100px', // 원하는 이미지 크기로 조정
+                                          height: 'auto',
+                                          borderRadius: '8px',
+                                          marginTop: '10px'
+                                       }}
+                                    />
+                                 </div>
+                              )} */}
+
                            </Tr>
                         </Table>
                      </TableWrapper>
                      <ButtonWrapper>
-                        <Button kind="gray" size="large" style={{ border: 'none' }} full onClick={openPreviewModal}>자금 투자 계획서 미리보기</Button>
-                        <Button size="large" full onClick={openConfirmSendModal}>계약 체결하기</Button>
+                        <Button type="button" kind="gray" size="large" style={{ border: 'none' }} full onClick={openPreviewModal}>자금 투자 계획서 미리보기</Button>
+                        <Button size="large" full onClick={openConfirmSendModal} type="submit">자금 투자 계약서 보내기</Button>
+                        {/* <Button size="large" full type="submit">자금 투자 계약서 보내기</Button> */}
                      </ButtonWrapper>
                   </MyInfo>
 
@@ -506,7 +736,7 @@ const Contents = styled.div`
    gap: 16px;
 `
 
-const ContentsWrapper = styled.div`
+const ContentsWrapper = styled.form`
    display: flex;
    flex-direction: column;
    gap: 52px;
@@ -552,3 +782,19 @@ const Main = styled.main`
    justify-content: center;
    min-height: calc(100dvh - 328px);
 `
+
+function writeAgreementForm(arg0: {
+   agreement_form: {
+      investment_id: string; // You will need to assign the correct value for this
+      investor_name: string; // Same here
+      investee_name: string; // Same here
+      investment_amount: number; // Ensure it's in the correct number format
+      prefer_contract_period: string; finally_contract_period: string; profit: number; // Assuming it's a number
+      deposit_day: number; repayment_delay_day: number; delinquent_quarter: number; delinquent_damages: number; special_contract_matters: string[]; address: string; representative_name: string; contact: string; signature_image_url: string;
+   }; repayment_forms: {
+      investment_id: string; repayment_amount: number; // Ensure it's a number
+      repayment_date: string;
+   }[];
+}, token: string) {
+   throw new Error("Function not implemented.");
+}
