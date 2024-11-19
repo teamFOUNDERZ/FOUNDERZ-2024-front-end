@@ -25,11 +25,7 @@ export default function My(){
                     <SemiBold16>관심분야</SemiBold16>
                     <Tagcontainer>
                         <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
-                        <Tag>#금융</Tag>
+                        <Tag>#IT</Tag>
                     </Tagcontainer>
                 </Field>
                 <Box>

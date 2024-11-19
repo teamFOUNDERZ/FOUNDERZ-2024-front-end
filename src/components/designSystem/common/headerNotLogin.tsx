@@ -30,7 +30,6 @@ function HeaderNotLogin() {
           </LeftWrapper>
           <RightWrapper>
             <NavButton onClick={toSignUp}>회원가입</NavButton>
-            <LoginButton onClick={toLogin}>로그인</LoginButton>
           </RightWrapper>
         </ItemWrapper>
       </Container>

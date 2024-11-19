@@ -3,6 +3,7 @@ import { Logo } from '../../assets';
 import { Colors } from '../../styles/colors';
 import { getCookie } from '../../utils/cookies';
 import { Button } from './Button';
+import { Text } from './Text';
 
 export const Header = () => {
   const accessToken = getCookie('accessToken');
@@ -25,18 +26,7 @@ export const Header = () => {
           </a>
         </Nav>
         <UserBox>
-          {accessToken ? (
-            <ProfileImg src="/images/3.webp" />
-          ) : (
-            <>
-              <a href="/signup">
-                <Button kind="white">회원가입</Button>
-              </a>
-              <a href="/login">
-                <Button>로그인</Button>
-              </a>
-            </>
-          )}
+          <Text>최승우님</Text>
         </UserBox>
       </HeaderContent>
     </HeaderBox>
