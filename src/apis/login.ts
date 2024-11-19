@@ -11,9 +11,10 @@ export const login = async (id: string, password: string) => {
 // 인터셉터로 요청 헤더에 토큰 자동 추가
 instance.interceptors.request.use(
   (config) => {
-    // 쿠키에서 토큰 읽기
+    // 쿠키에서 token 값을 읽기
     const token = document.cookie
       .split('; ')
+      .find(cookie => cookie.startsWith('token='))
       ?.split('=')[1];
 
     // 토큰이 존재하면 Authorization 헤더에 추가
