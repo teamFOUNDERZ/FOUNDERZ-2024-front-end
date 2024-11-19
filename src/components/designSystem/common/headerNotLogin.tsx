@@ -16,6 +16,12 @@ export default function headerNotLogined () {
           <a href="/post">
             <Button kind="white">사업 아이템</Button>
           </a>
+          <a href="/alarm">
+            <Button kind="white">내 알림</Button>
+          </a>
+          <a href="/my">
+            <Button kind="white">마이페이지</Button>
+          </a>
         </Nav>
         <UserBox>
             <>
